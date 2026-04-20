@@ -120,24 +120,24 @@ openclaw TS (`~/.openclaw/workspace/`) → **выключаем** `defi-monitor-
 
 **DoD:** `defi-ops/` готов, зависимости установлены, hello-world тест проходит, старый Research-v2 выключен, openclaw DeFi-cron выключен.
 
-- [ ] **Task 0.1** — директория + git
+- [x] **Task 0.1** — директория + git
   - Create: `PLAN.md` (этот файл — уже есть), `README.md`, `CLAUDE.md`, `.env.template`, `.gitignore`, `pyproject.toml`
   - Commit: `feat: bootstrap defi-ops`
-- [ ] **Task 0.2** — venv + deps
+- [x] **Task 0.2** — venv + deps
   - `python3.14 -m venv .venv && .venv/bin/pip install certifi Telethon tenacity pytest`
-- [ ] **Task 0.3** — выключить Research-v2 и openclaw DeFi-cron
+- [x] **Task 0.3** — выключить Research-v2 и openclaw DeFi-cron
   - `launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.research-v2.collect.plist`
   - В `~/.openclaw/cron/jobs.json` — `enabled: false` для `defi-monitor-30m`, `daily-briefing-10am`. Commit в openclaw workspace отдельно.
-- [ ] **Task 0.4** — миграция конфигов и credentials
+- [x] **Task 0.4** — миграция конфигов и credentials
   - Create `config/sources.yaml` (объединение handles/news_sources/youtube_sources/wallet_watch)
   - Create `config/watchlist.yaml`: 12 протоколов × (tier, event_keywords[])
   - Create `config/delivery.yaml`: chatId + topicId (спросить Хозяина если не подтверждены; chatId `-1003981168546` найден в `openclaw.json`, topic для нас — новый или 35)
   - Copy `openclaw.json → telegram.botToken` → `.env:TELEGRAM_BOT_TOKEN`
   - Copy Etherscan/Arkham/Helius keys из Research-v2 `.env`
-- [ ] **Task 0.5** — Karpathy wiki copy
+- [x] **Task 0.5** — Karpathy wiki copy
   - `cp -r ~/Research-v2/wiki ~/defi-ops/wiki` (с удалением stale data)
   - Обновить `wiki/index.md` путями
-- [ ] **Task 0.6** — `~/.claude/CLAUDE.md` Level 0 — добавить defi-ops как главный, Research-v2 помечен archived.
+- [x] **Task 0.6** — `~/.claude/CLAUDE.md` Level 0 — добавить defi-ops как главный, Research-v2 помечен archived.
 
 ### Sprint 1 — Ingest (Days 2–3)
 
