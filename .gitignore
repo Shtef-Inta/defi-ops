@@ -1,0 +1,34 @@
+# Secrets — NEVER commit
+.env
+.env.*
+!.env.template
+*.pem
+*.key
+
+# Local state
+state/ops.sqlite*
+state/*.jsonl
+state/*.lock
+state/api-budget.json
+state/run.log*
+state/STOP
+
+# Raw captures (regeneratable, large)
+raw/
+normalized/
+
+# Daily outputs (regenerated)
+digests/*.md
+digests/*.json
+
+# Virtual env
+.venv/
+__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/

@@ -1,0 +1,119 @@
+# Protocols we track. tier → weight in decision priority queue.
+# event_keywords → regex-triggers used by classify.py:event_key_extractor.
+
+tier_weights:
+  critical: 1.0
+  important: 0.7
+  normal: 0.4
+
+protocols:
+  - name: aave
+    tier: critical
+    aliases: [Aave, AAVE]
+    event_keywords:
+      launch: ["v4 live", "aave v4", "mainnet launch", "v4 deployed"]
+      freeze: ["frozen", "pause", "paused", "halt"]
+      depeg: ["rseth incident", "usds depeg", "collateral issue"]
+      integration: ["listed on", "integration with"]
+      tvl_milestone: ["tvl crossed", "tvl passed", "30m deposit", "50m deposit", "100m deposit"]
+      governance: ["aip-", "proposal", "on-chain vote"]
+
+  - name: uniswap
+    tier: critical
+    aliases: [Uniswap, UNI]
+    event_keywords:
+      launch: ["v4 hooks", "unichain", "universal router"]
+      governance: ["uni proposal", "fee switch"]
+      integration: ["listed on uni", "uniswap pool on"]
+
+  - name: ethena
+    tier: critical
+    aliases: [Ethena, USDe, sUSDe, ENA]
+    event_keywords:
+      cap: ["pt cap", "cap raise", "cap increase"]
+      depeg: ["usde depeg", "peg"]
+      launch: ["pt listed", "new pt"]
+
+  - name: pendle
+    tier: important
+    aliases: [Pendle, PENDLE, "PT-"]
+    event_keywords:
+      listing: ["pt listed", "new pt pool"]
+      yield: ["apy", "boost", "merit"]
+
+  - name: morpho
+    tier: important
+    aliases: [Morpho, MORPHO]
+    event_keywords:
+      vault: ["vault launched", "new vault"]
+      integration: ["listed on morpho"]
+
+  - name: lido
+    tier: important
+    aliases: [Lido, stETH, wstETH]
+    event_keywords:
+      depeg: ["steth depeg", "peg"]
+      governance: ["lip-", "proposal"]
+
+  - name: hyperliquid
+    tier: important
+    aliases: [Hyperliquid, HYPE]
+    event_keywords:
+      launch: ["hype airdrop", "hype listed"]
+      volume: ["daily volume", "record volume"]
+
+  - name: fluid
+    tier: important
+    aliases: [Fluid]
+    event_keywords:
+      launch: ["fluid v2", "smart collateral"]
+
+  - name: compound
+    tier: normal
+    aliases: [Compound, COMP]
+    event_keywords:
+      governance: ["cap-", "proposal"]
+
+  - name: curve
+    tier: normal
+    aliases: [Curve, CRV, crvUSD]
+    event_keywords:
+      depeg: ["crvusd depeg"]
+
+  - name: sky
+    tier: normal
+    aliases: [Sky, MakerDAO, DAI, USDS]
+    event_keywords:
+      rate: ["dsr", "ssr", "rate change"]
+
+  - name: spark
+    tier: normal
+    aliases: [Spark]
+    event_keywords:
+      rate: ["savings rate"]
+
+  - name: eigenlayer
+    tier: normal
+    aliases: [EigenLayer, EIGEN]
+    event_keywords:
+      launch: ["avs launched", "restaking live"]
+
+  - name: gearbox
+    tier: normal
+    aliases: [Gearbox, GEAR]
+
+  - name: balancer
+    tier: normal
+    aliases: [Balancer, BAL]
+
+  - name: gmx
+    tier: normal
+    aliases: [GMX]
+
+  - name: dydx
+    tier: normal
+    aliases: [dYdX, DYDX]
+
+  - name: jupiter
+    tier: normal
+    aliases: [Jupiter, JUP]

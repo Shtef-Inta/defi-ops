@@ -1,0 +1,29 @@
+{
+  "_description": "Contract/wallet labels. Used by wallets.py as manual fallback when Arkham label absent. Addresses lowercased. Read-only reference.",
+  "_last_synced": "2026-04-20",
+  "ethereum": {
+    "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2": {"protocol": "aave", "kind": "lending_pool", "version": "v3"},
+    "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9": {"protocol": "aave", "kind": "lending_pool", "version": "v2"},
+    "0x25f2226b597e8f9514b3f68f00f494cf4f286491": {"protocol": "aave", "kind": "treasury"},
+    "0x7a250d5630b4cf539739df2c5dacb4c659f2488d": {"protocol": "uniswap", "kind": "dex_router", "version": "v2"},
+    "0xe592427a0aece92de3edee1f18e0157c05861564": {"protocol": "uniswap", "kind": "dex_router", "version": "v3"},
+    "0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45": {"protocol": "uniswap", "kind": "dex_router", "version": "v3_02"},
+    "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": {"protocol": "uniswap", "kind": "dex_router", "version": "universal"},
+    "0x1a9c8182c09f50c8318d769245bea52c32be35bc": {"protocol": "uniswap", "kind": "treasury"},
+    "0xae7ab96520de3a18e5e111b5eaab095312d7fe84": {"protocol": "lido", "kind": "staking"},
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": {"protocol": "weth", "kind": "wrapped_native"},
+    "0xdac17f958d2ee523a2206206994597c13d831ec7": {"protocol": "tether", "kind": "stablecoin"},
+    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": {"protocol": "circle", "kind": "stablecoin"},
+    "0x6b175474e89094c44da98b954eedeac495271d0f": {"protocol": "sky", "kind": "stablecoin"},
+    "0x3ee18b2214aff97000d974cf647e7c347e8fa585": {"protocol": "wormhole", "kind": "bridge"},
+    "0x66a71dcef29a0ffbdbe3c6a460a3b5bc225cd675": {"protocol": "layerzero", "kind": "bridge"},
+    "0x8731d54e9d02c286767d56ac03e8037c07e01e98": {"protocol": "stargate", "kind": "bridge"},
+    "0xd152f549545093347a162dce210e7293f1452150": {"protocol": "disperse", "kind": "utility"},
+    "0x9008d19f58aabd9ed0d60971565aa8510560ab41": {"protocol": "cowswap", "kind": "dex_router"},
+    "0x881d40237659c251811cec9c364ef91dc08d300c": {"protocol": "metamask", "kind": "dex_aggregator"},
+    "0x1111111254eeb25477b68fb85ed929f73a960582": {"protocol": "1inch", "kind": "dex_router"},
+    "0xd9db270c1b5e3bd161e8c8503c55ceabee709552": {"protocol": "compound", "kind": "lending_pool", "version": "v2"},
+    "0x4c9edd5852cd905f086c759e8383e09bff1e68b3": {"protocol": "ethena", "kind": "stablecoin", "asset": "USDe"},
+    "0x9d39a5de30e57443bff2a8307a4256c8797a3497": {"protocol": "ethena", "kind": "staked", "asset": "sUSDe"}
+  }
+}
