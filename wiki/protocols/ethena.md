@@ -2,7 +2,7 @@
 type: protocol
 chain: multi
 tier: important
-last_updated: 2026-04-20
+last_updated: 2026-04-21
 ---
 
 # Ethena
@@ -22,7 +22,7 @@ Synthetic dollar протокол. Выпускает USDe (delta-neutral stable
 
 - Backing risk для tokenized gold proposal — нужен governance text + kairos research polls
 - USDe peg history и behavior во время market stress — не проверено
-- Implications $150M cap на sUSDe — это много или мало относительно текущего sUSDe supply? Без DeFiLlama не определить.
+- Implications $150M cap на sUSDe — это много или мало относительно текущего sUSDe supply? Без DeFiLlama не определить (Sprint 4).
 - Independent sources за пределами @ethena handle — пока только @KairosRes и @krakenfx как secondary
 
 ## Cross-refs
@@ -35,6 +35,6 @@ Synthetic dollar протокол. Выпускает USDe (delta-neutral stable
 
 ## Источники
 
-- @ethena (X) — официальный
+- @ethena (X) — official
 - @KairosRes (X) — independent research, governance commentary
 - @krakenfx (X) — custody/yield distribution

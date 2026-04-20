@@ -1,13 +1,18 @@
 # Wiki Log
 
-Append-only хронология ingest/query/lint действий над wiki. Формат: `## [YYYY-MM-DD] action | Title`. Не редактировать прошлые записи.
+Append-only хронология ingest/query/lint действий над wiki.
+Формат: `## [YYYY-MM-DD] action | Title`. Не редактировать прошлые записи.
+
+---
+
+> **Archive disclaimer:** Записи ниже от 2026-04-20 перенесены из Research-v2 wiki при миграции в defi-ops. Они описывают состояние Research-v2 на момент аудита. Research-v2 и openclaw TS pipeline сейчас frozen archive.
 
 ## [2026-04-20] init | Wiki bootstrap per Karpathy method
 - Создана структура `wiki/{protocols,assets,concepts,wallets,signals,events}/`
 - Создан `index.md` (каталог)
 - Создан `log.md` (этот файл)
 - Правила maintenance закреплены в `index.md` и в `.claude/rules/wiki-method.md`
-- Ingest начнётся с первой реальной страницей при следующем сигнале
+- Ingest начнётся с первой реальной страницы при следующем сигнале
 
 ## [2026-04-20] audit | Full machine scan — проекты, cron jobs, дубликаты
 - Запустил general-purpose agent для scan всех проектов на `/Users/shtef/`
@@ -36,7 +41,7 @@ Append-only хронология ingest/query/lint действий над wiki.
 - `morpho_labs → morpho` (Morpho Labs переехал, Playwright verified), `ethena_labs → ethena`, `kairosres → kairos_res`, `optimismFND → Optimism`
 - Новые handles в `defi_core`: HyperliquidX, 0xfluid, InstaDApp, sparkdotfi, SkyEcosystem, eigen_da, JupiterExchange, GMX_IO, dydx, CurveFinance, BalancerLabs
 - Новый канал в `youtube_sources.yaml`: @morpho
-- Embed-disabled профили: 0 (все подтверждённые верной записи)
+- Embed-disabled профили: 0 (все подверждённые верной записи)
 
 ## [2026-04-20] ingest | Aave, Uniswap, Ethena, PeckShield captures
 - Источник: `raw/x/twitter-browser-observed-aave-uniswap-ethena-peckshield-atlas-capture-*.json`
@@ -116,7 +121,7 @@ Append-only хронология ingest/query/lint действий над wiki.
 - 14 skills: using-superpowers, brainstorming, writing-plans, executing-plans, subagent-driven-development, dispatching-parallel-agents, test-driven-development, systematic-debugging, requesting-code-review, receiving-code-review, verification-before-completion, writing-skills, finishing-a-development-branch, using-git-worktrees
 - Активируются после рестарта Claude Code (skills tool не подгружает их в live сессии)
 - Правила интеграции в нашем workflow: [[../.claude/rules/superpowers-integration]]
-- Жёсткие guardrails: `PHASE_4_PLAN.md` остаётся single source of truth (не переписывать в /docs/superpowers/plans/). `phase4-discipline` перебивает "1% MUST use" философию — отказываем если brainstorming хочет новый scoring layer.
+- Жёсткие guardrails: `PHASE_4_PLAN.md` остаётся single source of truth (не переписывать в /docs/superpowers/plans!). `phase4-discipline` перебивает "1% MUST use" философию — отказываем если brainstorming хочет новый scoring layer.
 
 ## [2026-04-20] fix | RSS pub_date корректно пропагируется в captured_at
 - Баг: `import_generic_dir` брал `payload.capturedAt` (batch fetch time) для всех items, игнорируя `item.published_iso`.
@@ -124,3 +129,10 @@ Append-only хронология ingest/query/lint действий над wiki.
 - Исправление: `captured_at` теперь `item.published_iso > item.observedAt > payload.capturedAt`. Для уже импортированных дубликатов — UPDATE captured_at если подхватился новый pub_date.
 - Результат после прогона: clusters 49 → 148 (большинство singleton, что правильно — разнесены по реальным датам). Dual_source 22 → 10 (реальные), cross_family_confirmed 1 → 1 (AAVE V4 launch, window=0.1h, 4 независимых voice: aavelabs, aave-labs, the-rollup, capture).
 - Route sheets: cross_family_confirmed 3 → 4 (все AAVE V4). blocked_by_risk 2 → 0 (было артефактом batch-fetch, real incidents — single-voice, flagged но не blocked).
+
+## [2026-04-21] migrate | Unified wiki migration to defi-ops
+- Переписаны `index.md`, `hot.md`, `overview.md` под defi-ops taxonomy.
+- Обновлены `protocols/aave.md`, `protocols/ethena.md`, `protocols/uniswap.md`, `events/*.md`, `concepts/risk-overlay-peckshield.md`.
+- Добавлен archive disclaimer в `log.md` и `machine-audit-2026-04-20.md`.
+- Создан `docs/wiki-migration-inventory.md`.
+- Research-v2 и openclaw wiki помечены как frozen reference.

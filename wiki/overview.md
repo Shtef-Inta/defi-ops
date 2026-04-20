@@ -1,45 +1,41 @@
 ---
 type: overview
-last_updated: 2026-04-20
+last_updated: 2026-04-21
 ---
 
-# Research-v2 Overview
+# defi-ops Overview
 
-Локальный DeFi research pipeline для $100k капитала. Цель: от сигналов (X/YouTube/Telegram/Web/Wallets) → cross-source confirmation + wallet flow → financial recommendation в Telegram → outcome tracking → learning loop.
+Чистый DeFi pipeline для $100k капитала. От сигналов из 5 источников → cross-source confirmation + wallet flow + liquidity + risk + contradiction → ≤5 карточек в день в Telegram → Хозяин решает руками → outcome → learning loop.
 
 ## В одном взгляде
 
 ```
-  Sources                         Analysis                    Delivery
-  ───────                         ────────                    ────────
-  X/Twitter        ──┐
-  YouTube          ──┤
-  Telegram         ──┼→ signals.sqlite ─→ clusters ─→ route sheets ─→ Telegram card
-  Web/RSS          ──┤                                                     │
-  Profile sites    ──┘                                                     ↓
-                                                                    operator decision
-  Wallet/onchain   ─→ wallet-flows ─→ patterns+anomalies               │
-                                  ↘                                     ↓
-                                   correlation with signals        outcome + PnL
-                                                                        │
-                                                                        ↓
-                                                        source reliability adjust
+  Sources              Analysis                        Delivery
+  ───────              ────────                        ────────
+  X/Twitter      ──┐
+  YouTube        ──┤
+  Telegram       ──┼→ SQLite ─→ event-units ─→ decision cards ─→ Telegram
+  Web/RSS        ──┤                                               │
+  Wallets/onchain──┘                                               ↓
+                                                            operator decision
+                                                              │
+                                                              ↓
+                                                        outcome + PnL
+                                                              │
+                                                              ↓
+                                                    source reliability adjust
 ```
 
-## Текущий статус
+## Pipeline stages
 
-- **Phase 1 (сбор)** ✅ — X работает через bridge из browser-observed captures
-- **Phase 2 (оценка)** ✅ — scoring/triage/dedupe в Python pipeline
-- **Phase 3 (feedback)** 🔄 — 10 manual confirmations, top-3 prompt не достроен
-- **Phase 4 (route execution)** 🔄 — Task 1 (`generate_route_sheet.py`) готов, 3 задачи впереди
-- **Phase 5 (learning)** ❌ — зависит от Phase 4
-
-## Ключевые артефакты
-
-- `signals.sqlite` — единое хранилище сигналов (в .gitignore)
-- `digests/YYYY-MM-DD-route-sheets.{json,md}` — готовые маршруты для оператора
-- `digests/YYYY-MM-DD-defi-summary.md` — ежедневный DeFi-summary
-- `wiki/` — семантический слой (Karpathy method)
+1. **Ingest** (`src/ingest.py`) — fetch из 5 семейств: twitter, youtube, rss, telegram, wallets
+2. **Classify** (`src/classify.py`) — event-unit clustering `(protocol, event_key, 48h)`, voice-weighted confirmation, contradiction detection
+3. **Wallets** (`src/wallets.py`) — normalize tx → flows → pattern detection → group_divergence
+4. **Liquidity** (`src/liquidity.py`) — DeFiLlama TVL gate (без данных — карточка не уходит)
+5. **Decide** (`src/decide.py`) — cluster + flows + liquidity → decision card ≤10 строк, 3 кнопки: BUY PROBE / WATCH / SKIP
+6. **Deliver** (`src/deliver.py`) — Telegram send, dry-run default
+7. **Record** (`src/record.py`) — outcome CLI + reply parser (`=ВХОЖУ <id>`, `=ИГНОР <id>`)
+8. **Learn** (`src/learn.py`) — outcome → reliability delta по семьям
 
 ## Watchlist
 
@@ -48,21 +44,22 @@ last_updated: 2026-04-20
 | [[protocols/aave]] | critical | ethereum | V4 crossed $30M (April) |
 | [[protocols/uniswap]] | critical | ethereum | CCA context |
 | [[protocols/ethena]] | important | multi | PT listings на Aave/Plasma |
-| Pendle | critical | ethereum | (нет новых данных) |
-| Morpho | important | ethereum | (нет новых данных) |
-| Gearbox | critical | ethereum | (нет новых данных) |
+| Pendle | critical | ethereum | (ожидает ingest) |
+| Morpho | important | ethereum | (ожидает ingest) |
+| Hyperliquid | important | multi | (ожидает ingest) |
+| Fluid | important | ethereum | (ожидает ingest) |
 
 ## Ключевые правила
 
 1. Local-only. No live trading APIs. No signing. No wallets.
-2. Telegram send только с явным approval от Хозяина.
-3. Не строить новые scoring layers до реального outcome.
-4. Safety flags в каждом артефакте (`researchOnly=true`).
-5. Financial recommendation только после ≥2 cross-family confirmation + liquidity verified + no active risk overlay.
+2. Telegram send только с `--send --approve-send=approve-send`.
+3. Не строить новые scoring layers до ≥3 реальных outcomes.
+4. Safety flags в каждом артефакте (`researchOnly=True`, `sendAllowed=False` по умолчанию).
+5. Financial recommendation только после: voice_weight ≥3.0, ≥2 families, liquidity verified, no active risk overlay, contradiction disclosed.
+6. Noise cap: максимум 5 карточек/день в Telegram.
 
 ## Глубже
 
-- Полный план: [[../PHASE_4_PLAN]] (в корне проекта)
-- Текущие задачи: [[../tasks/todo]]
-- Проектные правила: [[../obsidian/projects/research/PROJECT_STATE]]
+- Полный план: `PLAN.md`
+- Проектный контекст: `CLAUDE.md`
 - Живая хронология wiki: [[log]]

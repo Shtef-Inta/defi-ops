@@ -2,7 +2,7 @@
 type: protocol
 chain: ethereum
 tier: critical
-last_updated: 2026-04-20
+last_updated: 2026-04-21
 ---
 
 # Uniswap
@@ -16,7 +16,7 @@ DEX. В watchlist — `critical`.
 
 ## Открытые вопросы
 
-- Текущий statе UNI tokenomics — unchanged?
+- Текущий state UNI tokenomics — unchanged?
 - CCA — это новый механизм или давний? Нужен timestamp.
 - Hooks adoption metric — TBD.
 
@@ -27,4 +27,4 @@ DEX. В watchlist — `critical`.
 
 ## Источники
 
-- @Uniswap (X) — официальный
+- @Uniswap (X) — official

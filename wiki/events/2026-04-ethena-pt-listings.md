@@ -5,8 +5,8 @@ protocol: ethena
 assets: [USDe, sUSDe, ENA]
 host_protocol: aave
 chain: plasma
-confirmation: single_source
-last_updated: 2026-04-20
+confidence: single
+last_updated: 2026-04-21
 ---
 
 # Ethena PT listings on Aave/Plasma (April 2026)
@@ -21,7 +21,7 @@ Ethena объявила листинг новых Principal Tokens (PT) на и�
 
 ## Источники
 
-- @ethena (X) — официальный пост
+- @ethena (X) — official пост
 - **Cross-family confirmation: ОТСУТСТВУЕТ** — пока нет governance post, нет docs link, нет DeFiLlama подтверждения активных pools
 
 ## Что не подтверждено
@@ -32,11 +32,11 @@ Ethena объявила листинг новых Principal Tokens (PT) на и�
 - Какой именно инстанс Aave на Plasma (это fork? licensed deployment?)
 - Implications для [[protocols/aave]] main deployment
 
-## Значение для route decisions
+## Значение для decision cards
 
-- Route sheet: `Ethena` tier=important, action=ждать
-- Триггер для пересмотра: Aave governance post → верификация caps → DeFiLlama показывает realизованный supply/borrow
-- Без этого — не входим
+- Tier: important
+- Триггер для пересмотра: Aave governance post → верификация caps → DeFiLlama показывает realized supply/borrow
+- Без этого — verdict `SKIP`
 
 ## Связанное
 

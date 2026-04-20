@@ -1,6 +1,6 @@
 ---
 type: concept
-last_updated: 2026-04-20
+last_updated: 2026-04-21
 ---
 
 # Risk Overlay — PeckShield
@@ -11,18 +11,20 @@ last_updated: 2026-04-20
 
 - PeckShield — независимый security feed, не marketing
 - Используется как **negative evidence gate**, не как positive signal
-- Если инцидент affects наш watched protocol — route sheets этого протокола переводятся в `BLOCKED_BY_RISK` lane до: (1) официального postmortem, (2) подтверждения что кошельки/код пофикшены
+- Если инцидент affects наш watched protocol — decision cards этого протокола переводятся в `BLOCKED` lane до: (1) official postmortem, (2) подтверждения что кошельки/код пофикшены
 
-## Реализация (планируется)
+## Реализация
 
-- Фаза C.3 в `PHASE_4_PLAN.md`: `scripts/apply_risk_overlay.py`
-- Связывает risk sentences из `raw/x/peckshieldalert-*` с protocols через mention
-- Adds `riskOverlayActive=true` в cluster → gate D.2 fails → no recommendation
+- Реализуется в `src/classify.py` — contradiction detector + risk overlay gate
+- Связывает risk sentences из ingest с protocols через mention / keyword matching
+- Adds `contradiction_flag=true` + `risk_flags=["security_incident"]` в cluster
+- Gate в `src/decide.py`: если `risk_flags` непустые и нет clearance → verdict `BLOCKED`
 
 ## Текущий статус
 
 - Захват от 2026-04-17 содержит @peckshieldalert items (TBD — посмотреть что конкретно)
 - Пока не attached к конкретному протоколу из watchlist
+- Will be enforced starting Sprint 2 (classify)
 
 ## Cross-refs
 
