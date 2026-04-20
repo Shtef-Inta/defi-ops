@@ -143,7 +143,7 @@ openclaw TS (`~/.openclaw/workspace/`) → **выключаем** `defi-monitor-
 
 **DoD:** `python -m src.cli run --only=ingest` наполняет `ops.sqlite` из 5 источников, не падает при отсутствии credentials, `pytest tests/test_ingest.py` зелёный.
 
-- [ ] **Task 1.1** — `src/db.py` schema
+- [x] **Task 1.1** — `src/db.py` schema
   - Tables: `signals`, `clusters`, `cluster_signals`, `wallet_tx`, `wallet_flows`, `decisions`, `outcomes`, `source_reliability`, `api_budget`
   - Indices на `captured_at`, `asset_symbols`, `protocol`, `family`, `status`
   - Idempotent DDL (CREATE IF NOT EXISTS)
