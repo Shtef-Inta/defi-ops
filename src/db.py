@@ -16,13 +16,15 @@ CREATE TABLE IF NOT EXISTS signals (
     captured_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     asset_symbols TEXT,
     sentiment TEXT CHECK(sentiment IN ('bullish','bearish','neutral')),
-    raw_payload TEXT
+    raw_payload TEXT,
+    source_id TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_signals_captured ON signals(captured_at);
 CREATE INDEX IF NOT EXISTS idx_signals_protocol ON signals(protocol);
 CREATE INDEX IF NOT EXISTS idx_signals_family ON signals(source_family);
 CREATE INDEX IF NOT EXISTS idx_signals_asset ON signals(asset_symbols);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_signals_source_id ON signals(source_family, source_id);
 
 -- Clusters: event-unit (protocol, event_key, 48h window)
 CREATE TABLE IF NOT EXISTS clusters (
@@ -144,6 +146,20 @@ CREATE TABLE IF NOT EXISTS api_budget (
 """
 
 
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Idempotent schema migrations for existing databases."""
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(signals)")}
+    if "source_id" not in cols:
+        conn.execute("ALTER TABLE signals ADD COLUMN source_id TEXT")
+    conn.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_signals_source_id ON signals(source_family, source_id)"
+    )
+    wcols = {row[1] for row in conn.execute("PRAGMA table_info(wallet_tx)")}
+    for col in ("tx_from", "tx_to", "tx_input", "tx_value"):
+        if col not in wcols:
+            conn.execute(f"ALTER TABLE wallet_tx ADD COLUMN {col} TEXT")
+
+
 def init_db(db_path: Optional[str] = None) -> sqlite3.Connection:
     path = Path(db_path) if db_path else Path(__file__).parent.parent / "state" / "ops.sqlite"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -151,6 +167,7 @@ def init_db(db_path: Optional[str] = None) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.executescript(SCHEMA_SQL)
+    _migrate(conn)
     conn.commit()
     return conn
 

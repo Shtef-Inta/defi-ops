@@ -21,6 +21,43 @@
 4. `src/<module>.py` — только при работе над этим модулем
 5. `tests/test_<module>.py` — перед изменением кода модуля
 
+## Memory System (вечная память / экономия токенов)
+
+Иерархия контекста по методу Карпати — загружается постепенно, не всё сразу.
+
+| Level | Файл | Что в нём | Когда читать |
+|--|--|--|--|
+| 0 (global) | `~/.claude/CLAUDE.md` | Проекты Хозьина, контракт общения, безопасность | Каждая сессия (Claude Code читает сам) |
+| 1 (project) | `CLAUDE.md` (этот файл) | Цель, стек, правила, команды | Каждая сессия |
+| 2 (domain) | `src/CLAUDE.md`, `config/CLAUDE.md` | Модули, конфиги | При работе с src/ или config/ |
+| 3 (hot cache) | `wiki/hot.md` | Активный спринт, открытые блокеры, последние изменения | Каждая сессия — первое, что читается из wiki |
+| 4 (catalog) | `wiki/index.md` | Полный каталог знаний | Когда hot.md недостаточно |
+| 5 (raw history) | `state/session-summaries.jsonl` | Machine-readable summaries всех сессий | При восстановлении контекста после перерыва |
+| 6 (memory) | `state/memory/` | Preferences, incidents, decisions | При старте сессии |
+
+### Session Start Ritual (cross-session handoff)
+
+При старте каждой сессии:
+```bash
+python scripts/session_start.py
+```
+Это прочитает последние 3 summaries, preferences, incidents и проверит freshness `wiki/hot.md`.
+
+### Правила обновления памяти
+
+1. **При старте сессии** — `python scripts/session_start.py`
+2. **После каждой сессии** — `python scripts/session_close.py`:
+   ```bash
+   python scripts/session_close.py --tasks="Task 1.3 done" --blockers="none" --next="Task 1.4"
+   ```
+   Опционально: `--preference="..."`, `--incident="..." --fix="..."`.
+   Это обновит `wiki/hot.md`, `wiki/log.md`, `state/session-summaries.jsonl`, `state/memory/`.
+3. **wiki/hot.md** — переписывается полностью при каждом обновлении. TTL 24 часа.
+4. **wiki/log.md** — append-only. Не редактировать прошлые записи.
+5. **state/session-summaries.jsonl** — append-only JSON Lines.
+6. **state/memory/preferences.jsonl** — только non-derivable insights (preferences, incidents).
+7. **Не перегружать CLAUDE.md.** Если раздел растёт >100 строк — вынести в wiki/ или src/CLAUDE.md.
+
 ## Главные файлы
 
 | Файл | Что в нём |

@@ -63,3 +63,18 @@ last_updated: 2026-04-21
 - Полный план: `PLAN.md`
 - Проектный контекст: `CLAUDE.md`
 - Живая хронология wiki: [[log]]
+
+## Backlinks
+
+- [[Aave]]
+- [[Ethena]]
+- [[Uniswap]]
+- [[Wiki Log]]
+- [[aave]]
+- [[ethena]]
+- [[log]]
+- [[protocols/aave]]
+- [[protocols/ethena]]
+- [[protocols/uniswap]]
+- [[uniswap]]
+

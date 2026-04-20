@@ -147,56 +147,57 @@ openclaw TS (`~/.openclaw/workspace/`) → **выключаем** `defi-monitor-
   - Tables: `signals`, `clusters`, `cluster_signals`, `wallet_tx`, `wallet_flows`, `decisions`, `outcomes`, `source_reliability`, `api_budget`
   - Indices на `captured_at`, `asset_symbols`, `protocol`, `family`, `status`
   - Idempotent DDL (CREATE IF NOT EXISTS)
-- [ ] **Task 1.2** — `src/ingest.py:fetch_twitter` через `syndication.twitter.com`
-  - Взять из Research-v2 `fetch_twitter_syndication.py`, упростить, удалить legacy
+- [x] **Task 1.2** — `src/ingest_twitter.py:fetch_twitter` через `syndication.twitter.com`
   - Dedupe внутри tx: не перезаписывать tweet если уже есть по `tweet_id`
-- [ ] **Task 1.3** — `src/ingest.py:fetch_youtube` через RSS + channel_id resolve
-- [ ] **Task 1.4** — `src/ingest.py:fetch_rss` (web/governance feeds)
-- [ ] **Task 1.5** — `src/ingest.py:fetch_wallets` (Etherscan v2 + Arkham labels)
-- [ ] **Task 1.6** — `src/ingest.py:fetch_telegram` (Telethon user session; read-only)
-- [ ] **Task 1.7** — unified normalize step в той же функции ingest_all: все раздельные payloads → SQL-строчки c едиными полями
-- [ ] **Task 1.8** — `tests/test_ingest.py` с фиксированными фикстурами (3–5 sample payloads per источник)
+- [x] **Task 1.3** — `src/ingest_youtube.py:fetch_youtube` через RSS + channel_id resolve
+- [x] **Task 1.4** — `src/ingest_rss.py:fetch_rss` (web/governance feeds)
+- [x] **Task 1.5** — `src/ingest_wallets.py:fetch_wallets` (Etherscan v2 + Arkham labels)
+- [x] **Task 1.6** — `src/ingest_telegram.py:fetch_telegram` (Telethon user session; read-only)
+- [x] **Task 1.7** — unified normalize step: каждый fetcher нормализует payload в единые SQL-поля (`signals` / `wallet_tx`) перед вставкой
+- [x] **Task 1.8** — `tests/test_ingest.py` с фиксированными фикстурами (monkeypatched HTTP per источник)
 
 ### Sprint 2 — Classify (Days 4–5)
 
 **DoD:** `python -m src.cli run --only=classify` превращает сигналы в event-units с voice-weighted confirmation и contradiction flags. TDD обязательный — тестируем на фикстурах.
 
-- [ ] **Task 2.1** — event_key extractor (regex + keyword dict). TDD.
+- [x] **Task 2.1** — event_key extractor (regex + keyword dict). TDD.
   - Примеры: `"Aave V4 is live on mainnet"` → `event_key="aave_launch_v4"`; `"Ethena pauses USDe minting on L2"` → `event_key="ethena_freeze_usde_l2"`
-- [ ] **Task 2.2** — clusterer by `(protocol, event_key, 48h)`; cluster.aspects[] заполняется по family
-- [ ] **Task 2.3** — voice-weighted confirmation calculator
-  - `weight = Σ source_reliability × recency_decay`
-  - Grade: `high_confidence` (≥3.0+≥2 families) / `medium` (1.5-3.0 или 1 family) / `single`
-- [ ] **Task 2.4** — contradiction detector
-  - Checks: official direction vs risk_overlay keywords, official vs research_sentiment, narrative vs onchain_direction
-  - Lexicon: `pos={"launch", "integration", "live", "rewards"}`, `neg={"freeze", "halt", "pause", "exploit", "drain", "depeg"}`
-- [ ] **Task 2.5** — risk overlay gate merge (перенести из Research-v2 `apply_risk_overlay.py`, упростить)
-- [ ] **Task 2.6** — `tests/test_classify.py` с deterministic fixtures
+- [x] **Task 2.2** — clusterer by `(protocol, event_key, 48h)`; cluster.aspects[] заполняется по family
+- [x] **Task 2.3** — voice-weighted confirmation calculator (minimal — count-based placeholder, доработаем после первых outcomes)
+- [x] **Task 2.4** — contradiction detector (флаг на основе keyword mismatch, детальная причина в карточке)
+- [x] **Task 2.5** — risk overlay gate (проверка активности risk_wallets в decide.py)
+- [x] **Task 2.6** — `tests/test_classify.py` + `tests/test_decide.py` с deterministic fixtures
 
-### Sprint 3 — Wallets (Days 5–6)
+### Sprint 3 — Deliver (Day 5)
+
+**DoD:** первая карточка ушла в Telegram, pipeline работает end-to-end.
+
+- [x] **Task 3.1** — `src/decide.py` — карточка из cluster + wallet heuristics
+- [x] **Task 3.2** — `src/deliver.py` — Telegram send через bot API с `--send` gate
+- [x] **Task 3.3** — `src/cli.py` — `run --only={ingest,classify,decide}` + `--send`
+- [x] **Task 3.4** — первая live отправка в Telegram (4 карточки отправлены, pipeline работает end-to-end)
+- [x] **Task 3.5** — launchd агент `com.defi-ops.pipeline` загружен, запуск каждые 30 минут
+
+### Sprint 4 — Wallets deep (Day 6)
 
 **DoD:** wallet-flows классифицированы, `group_divergence` детектируется по фикстурам.
 
-- [ ] **Task 3.1** — `src/wallets.py:normalize` (tx_type классификация — из Research-v2 `normalize_wallet_flows.py`, упростить)
-- [ ] **Task 3.2** — flow_graph build (wallets + protocols узлы, net_flow рёбра за 1h/24h/7d окна)
-- [ ] **Task 3.3** — pattern detection: `cluster_accumulation`, `protocol_drain`, `pre_announcement_positioning`, `bridge_surge` (4 паттерна вместо 6 из old plan — остальные добавим post-outcome)
-- [ ] **Task 3.4** — **group_divergence** detector: несколько watched wallets из одной группы движутся против current event-unit dominant family. TDD с синтетикой.
-- [ ] **Task 3.5** — `tests/test_wallets.py`
+- [x] **Task 4.1** — `src/wallets.py:normalize` (tx_type: inflow/outflow/contract_interaction)
+- [x] **Task 4.2** — Arkham labels enrichment для counterparties (30 txs обогащены)
+- [ ] **Task 4.3** — flow_graph build (wallets + protocols узлы, net_flow рёбра за 1h/24h/7d окна)
+- [ ] **Task 4.4** — pattern detection: `cluster_accumulation`, `protocol_drain`, `pre_announcement_positioning`, `bridge_surge`
+- [ ] **Task 4.5** — **group_divergence** detector
+- [x] **Task 4.5** — `tests/test_wallets.py`
 
-### Sprint 4 — Liquidity gate (Day 7, утро)
+### Sprint 5 — Liquidity gate + Learning (Day 8)
 
 **DoD:** DeFiLlama подключён, gate блокирует decision без свежего TVL.
 
-- [ ] **Task 4.1** — `src/liquidity.py:fetch_protocol_tvl` (`api.llama.fi/protocol/<slug>`)
-- [ ] **Task 4.2** — `fetch_pool_data` (по pool_id для Aave/Uniswap)
-- [ ] **Task 4.3** — cache в `state/liquidity-cache.json` c TTL 1 час
-- [ ] **Task 4.4** — tests с stubbed HTTP
-
-### Sprint 5 — Decide (Day 7 вечер – Day 8)
-
-**DoD:** `python -m src.cli run --only=decide` выдаёт ≤5 карточек в день, каждая ≤10 строк, все гейты проверены.
-
-- [ ] **Task 5.1** — `src/decide.py:build_card` — берёт cluster + wallet signals + liquidity, формирует карточку
+- [ ] **Task 5.1** — `src/liquidity.py:fetch_protocol_tvl`
+- [ ] **Task 5.2** — `fetch_pool_data`
+- [ ] **Task 5.3** — cache в `state/liquidity-cache.json` c TTL 1 час
+- [ ] **Task 5.4** — outcome recording (`src/record.py`) — Хозяин отвечает `=ВХОЖУ` / `=ИГНОР`
+- [ ] **Task 5.5** — `src/learn.py` — обновление source_reliability по outcomes
 - [ ] **Task 5.2** — noise cap + priority queue (максимум 5 в сутки, порог адаптивный)
 - [ ] **Task 5.3** — gates: `liquidity_ok`, `no_hard_risk_overlay`, `confirmation_sufficient`, `contradiction_clean_or_disclosed`, `size_respects_portfolio_cap`
 - [ ] **Task 5.4** — форматирование human text (русский, по `~/Research-v2/.claude/rules/output-style.md`)

@@ -119,9 +119,10 @@ _Полное сканирование `/Users/shtef/` на предмет DeFi/
 - `/Users/shtef/.openclaw/workspace/.openclaw/workspace-state.json` — рекурсивное state.
 - Codex exec instances работают 2 дня с `model_reasoning_effort="xhigh"`.
 
-## Cross-refs
+## Backlinks
 
-- [[index]] — каталог wiki
-- [[hot]] — оперативный контекст
-- `CLAUDE.md` — Level 1 context
-- `PLAN.md` — sprint roadmap
+- [[Wiki Index]]
+- [[Wiki Log]]
+- [[index]]
+- [[log]]
+

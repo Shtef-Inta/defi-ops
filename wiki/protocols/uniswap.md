@@ -20,11 +20,12 @@ DEX. В watchlist — `critical`.
 - CCA — это новый механизм или давний? Нужен timestamp.
 - Hooks adoption metric — TBD.
 
-## Cross-refs
+## Backlinks
 
-- [[assets/uni]]
-- [[concepts/dex-liquidity]]
+- [[Wiki Index]]
+- [[Wiki Log]]
+- [[defi-ops Overview]]
+- [[index]]
+- [[log]]
+- [[overview]]
 
-## Источники
-
-- @Uniswap (X) — official

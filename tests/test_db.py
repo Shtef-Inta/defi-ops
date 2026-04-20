@@ -25,6 +25,14 @@ def test_init_db_creates_schema(tmp_path):
         "api_budget",
     }
     assert expected.issubset(tables)
+
+    # source_id column exists
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(signals)")}
+    assert "source_id" in cols
+
+    # unique index on (source_family, source_id)
+    idx = {row["name"] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='index'")}
+    assert "idx_signals_source_id" in idx
     conn.close()
 
 

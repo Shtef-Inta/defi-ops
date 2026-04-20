@@ -1,3 +1,8 @@
+---
+type: log
+last_updated: 2026-04-21
+---
+
 # Wiki Log
 
 Append-only хронология ingest/query/lint действий над wiki.
@@ -85,12 +90,12 @@ Append-only хронология ingest/query/lint действий над wiki.
 - Хозяин снял блокировку на API credentials
 - Разрешено: Telegram MCP, Etherscan, Arkham, DeFiLlama, Helius, Anthropic (read-only)
 - Остаётся запрещено: trading, transfers, signing, onchain writes, private keys
-- Обновлено: [[../.claude/rules/safety]], [[hot]]
+- Обновлено: `.claude/rules/safety.md`, `wiki/hot.md`
 
 ## [2026-04-20] plan | Telegram MCP pattern wired into A.3
 - Источник: youtu.be/DzBdeHauw6c + github.com/0x4graham/telegram-mcp
 - Upgrade пути A.3 в PHASE_4_PLAN: вместо ручного bridge — Docker Telethon user-session + MCP
-- Создано: [[../.claude/rules/mcp-telegram]] с правилами использования
+- Создано: `.claude/rules/mcp-telegram.md` с правилами использования
 - Создан template: `research/config/telegram_sources.yaml.template`
 - Блокер: нужны credentials (api_id/hash, bot token) — ждём Хозяина
 
@@ -120,7 +125,7 @@ Append-only хронология ingest/query/lint действий над wiki.
 - Команда: `claude plugin install superpowers` → ✔ enabled user-scope
 - 14 skills: using-superpowers, brainstorming, writing-plans, executing-plans, subagent-driven-development, dispatching-parallel-agents, test-driven-development, systematic-debugging, requesting-code-review, receiving-code-review, verification-before-completion, writing-skills, finishing-a-development-branch, using-git-worktrees
 - Активируются после рестарта Claude Code (skills tool не подгружает их в live сессии)
-- Правила интеграции в нашем workflow: [[../.claude/rules/superpowers-integration]]
+- Правила интеграции в нашем workflow: `.claude/rules/superpowers-integration.md`
 - Жёсткие guardrails: `PHASE_4_PLAN.md` остаётся single source of truth (не переписывать в /docs/superpowers/plans!). `phase4-discipline` перебивает "1% MUST use" философию — отказываем если brainstorming хочет новый scoring layer.
 
 ## [2026-04-20] fix | RSS pub_date корректно пропагируется в captured_at
@@ -136,3 +141,34 @@ Append-only хронология ingest/query/lint действий над wiki.
 - Добавлен archive disclaimer в `log.md` и `machine-audit-2026-04-20.md`.
 - Создан `docs/wiki-migration-inventory.md`.
 - Research-v2 и openclaw wiki помечены как frozen reference.
+
+## [2026-04-20] session | Task 1.2+1.3 done, wiki-base skill, memory system
+- Сессия закрыта. См. `state/session-summaries.jsonl` для деталей.
+
+## Backlinks
+
+- [[2026-04-aave-v4-deposits]]
+- [[2026-04-ethena-pt-listings]]
+- [[Aave]]
+- [[Aave V4 deposits crossed $30M]]
+- [[Ethena]]
+- [[Ethena PT listings on Aave/Plasma (April 2026)]]
+- [[Hot Cache]]
+- [[Machine Audit — 2026-04-20]]
+- [[Risk Overlay — PeckShield]]
+- [[Uniswap]]
+- [[aave]]
+- [[concepts/risk-overlay-peckshield]]
+- [[defi-ops Overview]]
+- [[ethena]]
+- [[events/2026-04-aave-v4-deposits]]
+- [[events/2026-04-ethena-pt-listings]]
+- [[hot]]
+- [[machine-audit-2026-04-20]]
+- [[overview]]
+- [[protocols/aave]]
+- [[protocols/ethena]]
+- [[protocols/uniswap]]
+- [[risk-overlay-peckshield]]
+- [[uniswap]]
+

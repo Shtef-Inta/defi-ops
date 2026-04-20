@@ -1,3 +1,8 @@
+---
+type: index
+last_updated: 2026-04-21
+---
+
 # Wiki Index
 
 Семантический слой defi-ops по методу Карпати. Между `raw/` (сырые захваты) и `digests/` (daily summaries).
@@ -38,10 +43,17 @@ wiki/
 - [[protocols/uniswap]] — DEX, critical tier
 
 ### Assets
-*(пусто — наполнится при первом ingest с тикерными упоминаниями)*
+- [[assets/aave]] — AAVE token
+- [[assets/ena]] — ENA token
+- [[assets/susde]] — sUSDe synthetic dollar
+- [[assets/usde]] — USDe synthetic dollar
+- [[assets/uni]] — UNI token
 
 ### Concepts
+- [[concepts/dex-liquidity]] — DEX liquidity mechanics
+- [[concepts/governance]] — on-chain/off-chain governance
 - [[concepts/risk-overlay-peckshield]] — negative-evidence gate
+- [[concepts/stablecoin-rotation]] — yield-driven stablecoin flows
 
 ### Wallets
 *(пусто — наполнится после Sprint 3 wallet intelligence)*
@@ -67,3 +79,27 @@ wiki/
 - `PLAN.md` — sprint roadmap (Sprint 0–7)
 - `wiki/` — знания по DeFi-домену, обновляются при ingest
 - `src/classify.py` читает wiki при enrichment для `event_key` validation
+
+## Backlinks
+
+- [[2026-04-aave-v4-deposits]]
+- [[2026-04-ethena-pt-listings]]
+- [[Aave]]
+- [[Aave V4 deposits crossed $30M]]
+- [[Ethena]]
+- [[Ethena PT listings on Aave/Plasma (April 2026)]]
+- [[Machine Audit — 2026-04-20]]
+- [[Risk Overlay — PeckShield]]
+- [[Uniswap]]
+- [[aave]]
+- [[concepts/risk-overlay-peckshield]]
+- [[ethena]]
+- [[events/2026-04-aave-v4-deposits]]
+- [[events/2026-04-ethena-pt-listings]]
+- [[machine-audit-2026-04-20]]
+- [[protocols/aave]]
+- [[protocols/ethena]]
+- [[protocols/uniswap]]
+- [[risk-overlay-peckshield]]
+- [[uniswap]]
+

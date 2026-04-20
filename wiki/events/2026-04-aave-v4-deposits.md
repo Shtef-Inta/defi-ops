@@ -34,8 +34,13 @@ Aave V4 (новая версия протокола), запущенная на 
 - Ждём: governance post ИЛИ DeFiLlama TVL подтверждающий цифру
 - Текущий verdict: `WATCH`
 
-## Cross-refs
+## Backlinks
 
+- [[Aave]]
+- [[Wiki Index]]
+- [[Wiki Log]]
+- [[aave]]
+- [[index]]
+- [[log]]
 - [[protocols/aave]]
-- [[assets/aave]]
-- [[concepts/governance]]
+

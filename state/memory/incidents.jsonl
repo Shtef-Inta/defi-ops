@@ -1,0 +1,2 @@
+# Incidents memory — things that went wrong and how they were fixed.
+# Format: one JSON line per entry. Fields: date, text, fix.

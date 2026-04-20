@@ -21,17 +21,24 @@ Lending/borrowing протокол, флагман DeFi. В нашем watchlist
 - Risk parameters новых listings (USDe/sUSDe PT) — нужны docs ссылки.
 - Governance подтверждение из форума aave.com/governance ещё не пересекается с V4 launch по времени — pub_date из RSS vs fetch_time mismatch (Sprint 1).
 
-## Cross-refs
+## Backlinks
 
-- [[assets/aave]] (токен)
-- [[protocols/ethena]] (как distribution channel)
+- [[2026-04-aave-v4-deposits]]
+- [[2026-04-ethena-pt-listings]]
+- [[Aave V4 deposits crossed $30M]]
+- [[Ethena]]
+- [[Ethena PT listings on Aave/Plasma (April 2026)]]
+- [[Risk Overlay — PeckShield]]
+- [[Wiki Index]]
+- [[Wiki Log]]
+- [[concepts/risk-overlay-peckshield]]
+- [[defi-ops Overview]]
+- [[ethena]]
 - [[events/2026-04-aave-v4-deposits]]
-- [[concepts/governance]]
+- [[events/2026-04-ethena-pt-listings]]
+- [[index]]
+- [[log]]
+- [[overview]]
+- [[protocols/ethena]]
+- [[risk-overlay-peckshield]]
 
-## Источники
-
-- @aave (X) — official
-- Aave Labs (YouTube, @aavelabs) — official, video "Aave V4 deep dive and risk controls"
-- The Rollup (YouTube) — research, интервью со Стани Кулечовым про V4
-- Aave Governance Forum (RSS) — парсится, но pub_date propagation в Sprint 1
-- DeFiLlama TVL (пока не подключён — Sprint 4)

@@ -25,16 +25,18 @@ Synthetic dollar протокол. Выпускает USDe (delta-neutral stable
 - Implications $150M cap на sUSDe — это много или мало относительно текущего sUSDe supply? Без DeFiLlama не определить (Sprint 4).
 - Independent sources за пределами @ethena handle — пока только @KairosRes и @krakenfx как secondary
 
-## Cross-refs
+## Backlinks
 
-- [[assets/usde]], [[assets/susde]], [[assets/ena]]
-- [[protocols/aave]] (host для PT listings)
-- [[concepts/stablecoin-rotation]]
-- [[concepts/governance]]
+- [[2026-04-ethena-pt-listings]]
+- [[Aave]]
+- [[Ethena PT listings on Aave/Plasma (April 2026)]]
+- [[Wiki Index]]
+- [[Wiki Log]]
+- [[aave]]
+- [[defi-ops Overview]]
 - [[events/2026-04-ethena-pt-listings]]
+- [[index]]
+- [[log]]
+- [[overview]]
+- [[protocols/aave]]
 
-## Источники
-
-- @ethena (X) — official
-- @KairosRes (X) — independent research, governance commentary
-- @krakenfx (X) — custody/yield distribution

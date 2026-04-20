@@ -1,6 +1,6 @@
 ---
 type: cache
-last_updated: 2026-04-21T02:04Z
+last_updated: 2026-04-21T03:00Z
 purpose: Recent context cache for defi-ops sessions
 ---
 
@@ -12,9 +12,12 @@ purpose: Recent context cache for defi-ops sessions
 
 - **Sprint 0 — DONE**: scaffold, git, venv, deps, wiki copy, old services disabled.
 - **Sprint 1 — IN PROGRESS**:
-  - Task 1.1 `src/db.py` — DONE (schema + tests green)
-  - Next: Task 1.2 `src/ingest.py:fetch_twitter` via syndication.twitter.com
-- **Active code**: `src/db.py`, `tests/test_db.py`, `tests/test_sanity.py`
+  - Task 1.1 `src/db.py` — DONE
+  - Task 1.2 `src/ingest.py:fetch_twitter` — DONE (syndication + dedupe + tests)
+  - Task 1.3 `src/ingest.py:fetch_youtube` — DONE (RSS + channel_id resolve + tests)
+  - Task 1.4 `src/ingest.py:fetch_rss` — DONE (RSS 2.0 + Atom + dedupe + tests)
+  - Next: Task 1.5 `src/ingest.py:fetch_wallets`
+- **Active code**: `src/db.py`, `src/ingest.py`, `tests/test_db.py`, `tests/test_ingest.py`
 - **Active config**: `config/sources.yaml`, `config/watchlist.yaml`, `config/delivery.yaml`
 
 ## Стек
@@ -23,6 +26,12 @@ purpose: Recent context cache for defi-ops sessions
 - SQLite `state/ops.sqlite`
 - deps: certifi, Telethon, tenacity, pytest
 - 9 модулей максимум (`src/db.py`, `src/ingest.py`, `src/classify.py`, `src/wallets.py`, `src/liquidity.py`, `src/decide.py`, `src/deliver.py`, `src/record.py`, `src/learn.py`)
+
+## Session Handoff
+
+- **Start:** `python scripts/session_start.py` — восстанавливает контекст из summaries/memory
+- **End:** `python scripts/session_close.py --tasks="..." --next="..."` — сохраняет состояние
+- **Memory:** `state/memory/preferences.jsonl` + `state/memory/incidents.jsonl`
 
 ## Жёсткие правила
 
@@ -47,12 +56,27 @@ purpose: Recent context cache for defi-ops sessions
 
 ## Открытые блокеры
 
-- `src/ingest.py` — не написан (5 fetchers: twitter, youtube, rss, telegram, wallets)
+- `src/ingest.py` — twitter + youtube DONE; остались rss, telegram, wallets
 - `src/classify.py` — не написан (event-unit clustering, voice-weighted confirmation)
 - DeFiLlama не подключён — Sprint 4
 - Telegram delivery не интегрирована — Sprint 6
 
-## Последнее изменение wiki
+## Wiki Base — новый skill
 
-- `2026-04-21 02:04Z` — unified wiki migration: переписаны index, hot, overview; обновлены protocols/events/concepts для defi-ops taxonomy.
-- Если эта строка старше 24 часов и были новые ingest — обновить hot.md обязательно.
+- Skill `wiki-base` создан в `.claude/skills/wiki-base/`
+- Workflow: `state/raw/<source>/` → инкрементальное обновление `wiki/`
+- Скрипт: `scripts/rebuild_backlinks.py` — перестраивает бэклинки по всей вики
+- `src/ingest.py` теперь сохраняет raw payloads в `state/raw/`
+## Session State (auto-updated 2026-04-20 22:12Z)
+
+- **Done:** Task 1.2+1.3 done, wiki-base skill, memory system
+- **Blockers:** none
+- **Next:** Task 1.4 fetch_rss
+
+## Backlinks
+
+- [[Machine Audit — 2026-04-20]]
+- [[Wiki Log]]
+- [[log]]
+- [[machine-audit-2026-04-20]]
+

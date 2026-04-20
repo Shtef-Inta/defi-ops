@@ -26,7 +26,10 @@ last_updated: 2026-04-21
 - Пока не attached к конкретному протоколу из watchlist
 - Will be enforced starting Sprint 2 (classify)
 
-## Cross-refs
+## Backlinks
 
-- [[protocols/aave]], [[protocols/uniswap]], [[protocols/ethena]] (потенциально affected)
-- [[concepts/governance]]
+- [[Wiki Index]]
+- [[Wiki Log]]
+- [[index]]
+- [[log]]
+
