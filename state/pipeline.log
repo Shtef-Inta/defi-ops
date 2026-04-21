@@ -17,3 +17,22 @@
   7: sent
   8: sent
   9: sent
+[ingest] fetching all sources...
+  twitter: {'handles_attempted': 32, 'inserted': 0, 'skipped': 598, 'failed': 2}
+  youtube: {'channels_attempted': 6, 'inserted': 0, 'skipped': 0, 'failed': 6}
+  rss: {'sources_attempted': 4, 'inserted': 0, 'skipped': 40, 'failed': 0}
+  wallets: {'wallets_attempted': 3, 'inserted': 0, 'skipped': 150, 'failed': 0}
+  telegram: {'channels': 0, 'inserted': 0, 'skipped': 0, 'failed': 0}
+[classify] extracting event keys and clustering...
+  classified: 611
+[wallets] classifying transactions...
+  classified: 0
+[wallets] enriching Arkham labels...
+  lookups: 40, updated: 50
+[decide] building cards...
+  cards: 5
+  5: sent
+  6: sent
+  7: sent
+  8: sent
+  9: sent
