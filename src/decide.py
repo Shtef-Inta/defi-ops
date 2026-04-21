@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from src.db import get_conn
+from src.liquidity import fetch_protocol_tvl, is_liquidity_verified
 
 
 def _fetch_open_clusters(conn) -> list[dict]:
@@ -75,6 +76,12 @@ def build_cards(db_path: Optional[str] = None, max_cards: int = 5) -> list[dict]
         if len(cards) >= max_cards:
             break
 
+        # Liquidity gate
+        if not is_liquidity_verified(c["protocol"]):
+            continue
+
+        tvl_info = fetch_protocol_tvl(c["protocol"])
+
         signal = _fetch_latest_signal(conn, c["id"])
         text = (signal["content"] if signal else "").strip()
         title = text.split("\n")[0][:80] if text else c["event_key"]
@@ -100,6 +107,8 @@ def build_cards(db_path: Optional[str] = None, max_cards: int = 5) -> list[dict]
             "url": signal["url"] if signal else None,
             "created_at": datetime.now(timezone.utc).isoformat(),
         }
+        if tvl_info:
+            card["tvl"] = tvl_info
         cards.append(card)
 
     conn.close()
@@ -115,5 +124,16 @@ def format_card(card: dict) -> str:
     ]
     if card.get("url"):
         lines.append(f"Link: {card['url']}")
+    tvl_data = card.get("tvl")
+    if tvl_data:
+        tvl_usd = tvl_data.get("tvl") or 0
+        tvl_b = tvl_usd / 1_000_000_000
+        delta = tvl_data.get("tvl_24h_delta") or 0
+        prev_tvl = tvl_usd - delta
+        if prev_tvl:
+            pct = (delta / prev_tvl) * 100
+        else:
+            pct = 0.0
+        lines.append(f"TVL: ${tvl_b:.2f}B (Δ24h: {pct:+.2f}%)")
     lines.append(f"ID: {card['cluster_id']} | {card['created_at'][:19]}")
     return "\n".join(lines)
