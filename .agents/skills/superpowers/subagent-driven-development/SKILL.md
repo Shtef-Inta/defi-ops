@@ -1,11 +1,15 @@
-# Skill: subagent-driven-development
+---
+name: subagent-driven-development
+description: Execute a plan using isolated subagents - one coder per task + one reviewer after each task
+---
 
-## Purpose
+# Subagent-Driven Development
+
 Execute a plan using isolated subagents: one coder per task + one reviewer after each task.
 
 ## When to use
 - A plan exists in `docs/superpowers/plans/`.
-- Tasks are independent enough for parallel execution.
+- Tasks are independent enough for isolated execution.
 
 ## Steps
 1. Read the plan.
@@ -17,12 +21,14 @@ Execute a plan using isolated subagents: one coder per task + one reviewer after
    e. If review passes → commit.
 3. After all tasks: run full test suite.
 
-## Review checklist (for reviewer agent)
+## Review Checklist (for reviewer agent)
 - [ ] Code follows project style (≤400 lines per module).
 - [ ] Tests added and passing.
 - [ ] No hardcoded secrets.
 - [ ] No financial actions without gate.
 - [ ] Wiki / docs updated if needed.
 
-## Example trigger
-"Execute plans/wallet-divergence-plan.md using subagents"
+## Remember
+- Each task gets a fresh subagent with clean context.
+- Review is mandatory between tasks.
+- If a task fails review twice, escalate to human.

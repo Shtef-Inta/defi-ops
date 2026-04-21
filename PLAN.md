@@ -193,9 +193,9 @@ openclaw TS (`~/.openclaw/workspace/`) → **выключаем** `defi-monitor-
 
 **DoD:** DeFiLlama подключён, gate блокирует decision без свежего TVL.
 
-- [ ] **Task 5.1** — `src/liquidity.py:fetch_protocol_tvl`
-- [ ] **Task 5.2** — `fetch_pool_data`
-- [ ] **Task 5.3** — cache в `state/liquidity-cache.json` c TTL 1 час
+- [x] **Task 5.1** — `src/liquidity.py:fetch_protocol_tvl` + cache TTL 1h
+- [x] **Task 5.2** — integrated into `src/decide.py` (blocks cards when liquidity missing, shows TVL in card)
+- [ ] **Task 5.3** — `fetch_pool_data` (pool-level liquidity)
 - [ ] **Task 5.4** — outcome recording (`src/record.py`) — Хозяин отвечает `=ВХОЖУ` / `=ИГНОР`
 - [ ] **Task 5.5** — `src/learn.py` — обновление source_reliability по outcomes
 - [ ] **Task 5.2** — noise cap + priority queue (максимум 5 в сутки, порог адаптивный)

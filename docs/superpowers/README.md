@@ -6,7 +6,7 @@
 ## Workflow
 
 ```
-idea → brainstorm → spec → plan → subagent task → review → verify → done
+idea → brainstorm → spec → plan → execute → review → verify → done
 ```
 
 ## Directories
@@ -21,27 +21,33 @@ idea → brainstorm → spec → plan → subagent task → review → verify �
 
 | Skill | Trigger | What it does |
 |---|---|---|
-| `brainstorming` | "let's design X" | Writes spec to `specs/` |
-| `writing-plans` | "plan implementation of X" | Writes plan to `plans/` |
-| `subagent-driven-development` | "execute plan X" | Runs coder agent + review agent per task |
+| `brainstorming` | "let's design X" | Writes spec to `specs/`, requires user approval before code |
+| `writing-plans` | "plan implementation of X" | Writes detailed plan to `plans/` with bite-sized tasks |
+| `executing-plans` | "execute plan X inline" | Batch execution with checkpoints (no subagents) |
+| `subagent-driven-development` | "execute plan X via subagents" | Fresh coder agent per task + mandatory review agent |
 | `verification-before-completion` | "verify task X" | Final check before marking done |
 
 ## Usage
 
 ```bash
-# 1. Brainstorm → spec
-kimi-cli agent --skill docs/superpowers/skills/brainstorming "Add wallet divergence alerts"
+# 1. Brainstorm → spec (user approval required before any code)
+kimi-cli agent --skill .agents/skills/superpowers/brainstorming "Add wallet divergence alerts"
 
 # 2. Plan → plan file
-kimi-cli agent --skill docs/superpowers/skills/writing-plans "specs/wallet-divergence-spec.md"
+kimi-cli agent --skill .agents/skills/superpowers/writing-plans "specs/wallet-divergence-design.md"
 
-# 3. Execute via subagents
-kimi-cli agent --skill docs/superpowers/skills/subagent-driven-development "plans/wallet-divergence-plan.md"
+# 3a. Execute via subagents (recommended)
+kimi-cli agent --skill .agents/skills/superpowers/subagent-driven-development "plans/wallet-divergence-plan.md"
+
+# 3b. Or execute inline
+kimi-cli agent --skill .agents/skills/superpowers/executing-plans "plans/wallet-divergence-plan.md"
 ```
 
 ## Rules
 
-- Each task ≤400 lines of code (split if larger).
-- Review agent runs after every task.
-- No financial actions without explicit `--approve-send`.
-- All changes tracked in git.
+- **Hard gate:** No code before design approval (brainstorming skill).
+- **No placeholders:** Every plan step must have actual code/commands.
+- **Each task ≤400 lines** of code (split if larger).
+- **Review mandatory** between tasks in subagent mode.
+- **No financial actions** without explicit `--approve-send`.
+- **All changes tracked** in git.
