@@ -35,6 +35,12 @@ twitter:
     - route2fi
     - kairos_res
 
+  social_community: # source_family: social_community
+    - handle: EvanLuthra
+      source_family: social_community
+      priority: 2
+      enabled: true
+
   risk_overlay:     # source_family: risk_overlay (BLOCKING gate)
     - peckshieldalert
     - peckshield

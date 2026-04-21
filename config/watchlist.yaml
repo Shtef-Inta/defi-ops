@@ -117,3 +117,24 @@ protocols:
   - name: jupiter
     tier: normal
     aliases: [Jupiter, JUP]
+
+  - name: anthropic
+    tier: normal
+    aliases: [Anthropic, Claude, Claude Code]
+    event_keywords:
+      launch: ["claude code", "claude launch", "new model"]
+      integration: ["partnership with", "integrates with"]
+
+  - name: openai
+    tier: normal
+    aliases: [OpenAI, GPT, ChatGPT]
+    event_keywords:
+      launch: ["gpt-", "new model", "o1", "o3"]
+      integration: ["partnership with", "integrates with"]
+
+  - name: google_ai
+    tier: normal
+    aliases: [Google, Gemini, DeepMind]
+    event_keywords:
+      launch: ["gemini", "new model"]
+      integration: ["partnership with", "integrates with"]

@@ -128,6 +128,17 @@ def test_classify_signals_groups_same_event_within_48h(monkeypatch, tmp_path):
     conn.close()
 
 
+def test_extract_event_key_ai_tech():
+    assert classify.extract_event_key("Anthropic launches Claude Code v2", None) == (
+        "anthropic",
+        "anthropic_launch_v2",
+    )
+    assert classify.extract_event_key("OpenAI GPT-5 is live", None) == (
+        "openai",
+        "openai_launch_gpt",
+    )
+
+
 def test_classify_signals_separate_clusters_after_48h(monkeypatch, tmp_path):
     db_file = tmp_path / "test.sqlite"
     conn = init_db(str(db_file))
