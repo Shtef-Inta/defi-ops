@@ -172,3 +172,19 @@ Append-only хронология ingest/query/lint действий над wiki.
 - [[risk-overlay-peckshield]]
 - [[uniswap]]
 
+
+## 2026-04-25 — Dashboard + TA + Proxy + AI Debate Feed
+
+**Session:** Kimi recovered all files after accidental `git clean -fd`.
+**Delivered:**
+- `src/dashboard_server.py` — Arkham-style live dashboard with AI Debate feed
+- `src/technical_analysis.py` — CoinGecko OHLCV + RSI/EMA signals
+- `src/ta_webhook_server.py` — TradingView webhook endpoint (port 8080)
+- `scripts/fetch_transcripts_conservative.py` — Webshare rotating proxy integration
+- `scripts/youtube_orchestrator.py` — Webshare proxy for YouTube fetching
+- `config/sources.yaml` — Added `@ardenTrading` channel
+- `config/watchdog.yaml` — Proxy env injection for youtube_orchestrator
+- `.env` — `WEBSHARE_PROXY_URL` for rotating residential proxy
+
+**Architecture:** Dashboard runs on port 8765, webhook on 8080, both integrated into daemon.
+**Backlinks:** [[dashboard]], [[technical_analysis]], [[webshare_proxy]], [[agent_debate]]

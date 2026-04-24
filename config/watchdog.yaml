@@ -1,0 +1,48 @@
+# Watchdog configuration — processes that must never stop.
+check_interval: 30
+max_restarts: 3
+restart_window: 300
+alert_cooldown: 3600
+
+processes:
+  - name: daemon
+    type: pidfile
+    pidfile: state/daemon.pid
+    start: .venv/bin/python -m src.daemon
+    log_out: state/daemon.log
+    log_err: state/daemon.log
+
+  - name: telegram_bot
+    type: pgrep
+    pattern: scripts/telegram_bot.py
+    start: .venv/bin/python scripts/telegram_bot.py
+    log_out: state/telegram_bot.log
+    log_err: state/telegram_bot.log
+
+  - name: swing
+    type: pgrep
+    pattern: scripts/run_swing.py
+    start: .venv/bin/python scripts/run_swing.py
+    log_out: state/swing.log
+    log_err: state/swing.log
+
+  - name: scalper
+    type: pgrep
+    pattern: scripts/run_scalper.py
+    start: .venv/bin/python scripts/run_scalper.py
+    log_out: state/scalper.log
+    log_err: state/scalper.log
+
+  - name: tor
+    type: pgrep
+    pattern: "tor.*torrc"
+    start: /opt/homebrew/opt/tor/bin/tor -f /tmp/torrc --RunAsDaemon 1
+
+  - name: youtube_orchestrator
+    type: pgrep
+    pattern: "youtube_orchestrator.py"
+    start: ".venv/bin/python scripts/youtube_orchestrator.py"
+    env:
+      WEBSHARE_PROXY_URL: "http://jgeeplbs:tutbx75nb3dy@p.webshare.io:80"
+    log_out: state/youtube_orchestrator.log
+    log_err: state/youtube_orchestrator.log

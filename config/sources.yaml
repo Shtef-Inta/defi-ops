@@ -1,64 +1,4 @@
-# defi-ops — единый источник всех входов.
-# Все пять семейств (twitter/youtube/rss/telegram/wallets) в одном файле,
-# чтобы не было десяти yaml'ок. source_family определяет вес голоса.
-
-settings:
-  enabled: true
-  user_agent: "defi-ops/0.1 (read-only research)"
-  request_timeout_seconds: 15
-  max_items_per_source: 50
-
-twitter:
-  # Fetched via public syndication.twitter.com endpoint, no keys needed.
-  defi_core:        # source_family: official
-    - aave
-    - uniswap
-    - pendle_fi
-    - morpho
-    - ethena
-    - gearboxprotocol
-    - HyperliquidX
-    - 0xfluid
-    - InstaDApp
-    - sparkdotfi
-    - SkyEcosystem
-    - eigen_da
-    - JupiterExchange
-    - GMX_IO
-    - dydx
-    - CurveFinance
-    - BalancerLabs
-
-  researchers:      # source_family: research
-    - DefiIgnas
-    - 0xngmi
-    - route2fi
-    - kairos_res
-
-  social_community: # source_family: social_community
-    - handle: EvanLuthra
-      source_family: social_community
-      priority: 2
-      enabled: true
-
-  risk_overlay:     # source_family: risk_overlay (BLOCKING gate)
-    - peckshieldalert
-    - peckshield
-    - SlowMist_Team
-
-  analytics:        # source_family: aggregator
-    - tokenterminal
-    - defillama
-    - dune
-
-  infra:            # source_family: official (L1/L2)
-    - ethereum
-    - arbitrum
-    - base
-    - Optimism
-
 youtube:
-  # Fetched via public RSS (channel_id resolved from HTML once, cached in state/).
   official:
     - handle: aavelabs
       name: Aave Labs
@@ -88,7 +28,44 @@ youtube:
       source_family: research
     - handle: therollup
       name: The Rollup
-      url: https://www.youtube.com/@TheRollup
+      url: https://www.youtube.com/@therollup
+      source_family: research
+    - handle: CoinBureau
+      name: Coin Bureau
+      url: https://www.youtube.com/@CoinBureau
+      source_family: research
+    - handle: Finematics
+      name: Finematics
+      url: https://www.youtube.com/@Finematics
+      source_family: research
+    - handle: TheDefiant
+      name: The Defiant
+      url: https://www.youtube.com/@TheDefiant
+      source_family: aggregator
+    - handle: patrickcollins
+      name: Patrick Collins
+      url: https://www.youtube.com/@patrickcollins
+      source_family: research
+      enabled: false
+    - handle: crypto_inside
+      name: CryptoInside
+      url: https://www.youtube.com/@crypto_inside
+      source_family: research
+    - handle: etokasatkin
+      name: Евгений Касаткин
+      url: https://www.youtube.com/@etokasatkin
+      source_family: research
+    - handle: investzone5019
+      name: INVEST ZONE | Ruslan Khairullin
+      url: https://www.youtube.com/@investzone5019
+      source_family: research
+    - handle: AnufrievNikita
+      name: Nikita Anufriev | Хедлайнеры
+      url: https://www.youtube.com/@AnufrievNikita
+      source_family: research
+    - handle: ardenTrading
+      name: АРДЕНСКИЙ | Трейдинг и психология
+      url: https://www.youtube.com/@ardenTrading
       source_family: research
 
 rss:
@@ -115,60 +92,35 @@ rss:
       protocol: compound
       enabled: true
 
-telegram:
-  # Read-only via Telethon user session. Active only when TELEGRAM_API_ID/HASH set.
+telegram_web:
   channels:
+    - handle: cryptorank
+      source_family: aggregator
+      priority: 2
+      enabled: false
+    - handle: DeFiMillion
+      source_family: research
+      priority: 2
+      enabled: true
+
+telegram:
+  channels:
+    - handle: CryptoInside_Channel
+      source_family: research
+      priority: 2
+      protocol: ""
+      enabled: true
     - handle: DeFiLlama_News
       source_family: aggregator
       priority: 2
-      enabled: false   # enable after first Telethon auth
+      enabled: true
     - handle: aave_official
       source_family: official
       priority: 1
       protocol: aave
-      enabled: false
-
-wallets:
-  # Starting anchors. smart_money group filled dynamically by wallets.py autodiscover.
-  reference:        # observational, not used for alpha signals
-    - address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-      name: vitalik.eth
-      chain: ethereum
       enabled: true
-
-  cex_hotwallets:   # counterparty labeling anchors
-    - address: "0xF977814e90dA44bFA03b6295A0616a897441aceC"
-      name: Binance 8
-      chain: ethereum
+    - handle: https://t.me/+EBXb5BsWu-JmMmIy
+      source_family: research
+      priority: 2
+      protocol: ""
       enabled: true
-
-  risk_wallets:     # any activity → blocking alert in classify.py
-    - address: "0x098B716B8Aaf21512996dC57EB0615e2383E2f96"
-      name: Ronin bridge exploit EOA (Lazarus)
-      chain: ethereum
-      enabled: true
-
-  smart_money: []   # filled by wallets.py:autodiscover based on top holders of watched yield tokens
-
-  autodiscover:
-    # Sprint 3: rank EOA holders of these yield-tokens by age+activity+diversification.
-    # Top-10 joins smart_money group, weekly re-sync.
-    enabled: true
-    re_sync_days: 7
-    max_smart_money: 10
-    yield_tokens:
-      - symbol: aUSDC
-        contract: "0x98C23E9d8f34FEFb1B7BD6a91B7FF122F4e16F5c"  # Aave v3 aUSDC
-        protocol: aave
-      - symbol: stETH
-        contract: "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84"
-        protocol: lido
-      - symbol: USDe
-        contract: "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3"
-        protocol: ethena
-      - symbol: sUSDe
-        contract: "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497"
-        protocol: ethena
-      - symbol: rETH
-        contract: "0xae78736Cd615f374D3085123A210448E74Fc6393"
-        protocol: rocketpool
