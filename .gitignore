@@ -32,3 +32,15 @@ __pycache__/
 *~
 .vscode/
 .idea/
+
+# State files (runtime only, never commit)
+state/*.session
+state/*.log
+state/*.pid
+state/*.json
+state/*.sqlite
+state/*.db
+state/memory/
+state/raw/
+state/youtube_*/
+state/ai_channels_raw/

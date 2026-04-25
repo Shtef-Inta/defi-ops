@@ -13,6 +13,7 @@ import sqlite3
 import sys
 import threading
 from datetime import datetime, timezone
+from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from typing import Optional
 

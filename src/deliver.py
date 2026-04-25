@@ -79,3 +79,8 @@ def deliver(
             except Exception as exc:
                 results.append({"cluster_id": card["cluster_id"], "status": "error", "error": str(exc)})
     return results
+
+
+def deliver_briefs(analyses, topic_id=None, dry_run=False):
+    """Wrapper for daemon pipeline."""
+    return deliver(analyses, topic_id=topic_id, dry_run=dry_run, card_type="briefs")

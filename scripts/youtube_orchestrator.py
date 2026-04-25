@@ -82,7 +82,9 @@ def get_or_refresh_video_list(channel, max_age_hours=24):
             if line.startswith("{"):
                 data = json.loads(line)
                 entries = data.get("entries", [])
-                videos = [{"id": e["id"], "title": e.get("title", "")} for e in entries if e.get("id")]
+                videos = [{"id": e["id"], "title": e.get("title", ""), "upload_date": e.get("upload_date", "")} for e in entries if e.get("id")]
+                # Sort newest first
+                videos.sort(key=lambda v: v.get("upload_date", ""), reverse=True)
                 cache_path.parent.mkdir(parents=True, exist_ok=True)
                 cache_path.write_text(json.dumps(videos, indent=2, ensure_ascii=False))
                 print(f"  -> {len(videos)} videos cached", flush=True)

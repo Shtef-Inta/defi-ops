@@ -116,11 +116,19 @@ def build_cards(db_path: Optional[str] = None, max_cards: int = 5) -> list[dict]
 
 
 def format_card(card: dict) -> str:
+    protocol = card.get("protocol", "unknown")
+    event_key = card.get("event_key") or card.get("title") or "Unknown"
+    title = card.get("title") or card.get("event_key") or ""
+    stance = card.get("stance") or card.get("capital_stance") or "neutral"
+    weight = card.get("weight", card.get("voice_weight", 0))
+    families = card.get("families") or card.get("source_families") or ""
+    cluster_id = card.get("cluster_id", 0)
+    created_at = card.get("created_at", "")
     lines = [
-        f"🚨 {card['protocol'].upper()} — {card['event_key']}",
-        f"Title: {card['title']}",
-        f"Stance: {card['stance']}",
-        f"Weight: {card['weight']} | Families: {card['families']}",
+        f"🚨 {protocol.upper()} — {event_key}",
+        f"Title: {title}",
+        f"Stance: {stance}",
+        f"Weight: {weight} | Families: {families}",
     ]
     if card.get("url"):
         lines.append(f"Link: {card['url']}")
@@ -135,5 +143,6 @@ def format_card(card: dict) -> str:
         else:
             pct = 0.0
         lines.append(f"TVL: ${tvl_b:.2f}B (Δ24h: {pct:+.2f}%)")
-    lines.append(f"ID: {card['cluster_id']} | {card['created_at'][:19]}")
+    created_snippet = created_at[:19] if isinstance(created_at, str) else ""
+    lines.append(f"ID: {cluster_id} | {created_snippet}")
     return "\n".join(lines)

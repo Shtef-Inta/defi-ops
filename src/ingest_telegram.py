@@ -95,6 +95,7 @@ def fetch_telegram(
         return {"channels": len(channels), "inserted": 0, "skipped": 0, "failed": len(channels)}
 
     session_path = Path(__file__).parent.parent / "state" / "telegram.session"
+    bot_token = _env_key("TELEGRAM_BOT_TOKEN")
     conn = get_conn(db_path)
     inserted = 0
     skipped = 0
@@ -113,7 +114,13 @@ def fetch_telegram(
     )
 
     try:
-        client.start()
+        client.connect()
+        if not client.is_user_authorized():
+            if bot_token:
+                client.start(bot_token=bot_token)
+            else:
+                client.disconnect()
+                return {"channels": len(channels), "inserted": 0, "skipped": 0, "failed": len(channels)}
         for ch in channels:
             handle = ch.get("handle", "")
             if not handle:
@@ -183,7 +190,8 @@ def fetch_telegram(
                 failed += 1
                 continue
     finally:
-        client.disconnect()
+        if client.is_connected():
+            client.disconnect()
 
     conn.commit()
     conn.close()

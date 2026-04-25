@@ -124,3 +124,238 @@ telegram:
       priority: 2
       protocol: ""
       enabled: true
+    - handle: Ai_Battle_Ai
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: Howto_AI
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: Kiber_potok
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: Logic_IQ
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: NeuroBudniYuliana
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: SAV_AI
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: SNS_Studio_MENU
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: SystemAnalystInterview
+      source_family: research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: agilecareer
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: agipdoom
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: ai_gpt_effect
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: aibroio
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: aidivision
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: aivengonews
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: arinamikhalna
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: bezsmuzi
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: bitbitgoby
+      source_family: research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: digitalsov
+      source_family: research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: disruptiveinnovations
+      source_family: research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: getit_blog
+      source_family: research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: glamgpt
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: it_begin
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: it_begin_books
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: just_genych
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: marishina_ai
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: mironovanni
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: mnogovakansiy
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: neirofoto_ru
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: neuraljoke
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: neuro_text
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: neurodior
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: neyroskuf
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: openclawc
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: produbay
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: prog_ai
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: prompts_image
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: promtkris
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: promtychatgpt
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: proneuralnetwork
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: safebdv
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: social_graph_channel_ru
+      source_family: research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: sova_freelance
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: studio_neurosolutions
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: tiski_tech
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: worksvsem
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: wtfwithservice
+      source_family: social_community
+      priority: 2
+      protocol: ""
+      enabled: true
+    - handle: zenithphoto
+      source_family: ai_research
+      priority: 2
+      protocol: ""
+      enabled: true

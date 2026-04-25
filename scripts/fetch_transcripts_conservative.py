@@ -203,6 +203,7 @@ def process_channel(video_file, out_dir, delay_min=5.0, delay_max=10.0, resume=T
     }
 
     todo = [v for v in videos if v["id"] not in done_ids and v["id"] not in manual_ids]
+    todo.sort(key=lambda v: v.get("upload_date", ""), reverse=True)
     api_todo = [v for v in todo if v["id"] not in deferred_ids]
     fallback_todo = [v for v in todo if v["id"] in deferred_ids]
 
