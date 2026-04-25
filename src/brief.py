@@ -9,11 +9,30 @@ def _clean(text: str) -> str:
     return re.sub(r'<[^>]+>', '', text)
 
 
+def _dedupe_by_protocol(analyses: list[dict]) -> list[dict]:
+    seen = {}
+    for a in analyses:
+        proto = a.get("protocol", "").lower()
+        if not proto:
+            continue
+        # Keep the one with highest deploy_usd (most actionable)
+        existing = seen.get(proto)
+        if existing is None:
+            seen[proto] = a
+        else:
+            existing_deploy = (existing.get("capital_stance") or {}).get("deploy_now_usd", 0)
+            new_deploy = (a.get("capital_stance") or {}).get("deploy_now_usd", 0)
+            if new_deploy > existing_deploy:
+                seen[proto] = a
+    return list(seen.values())
+
+
 def format_daily_brief(analyses: list[dict], positions: dict) -> str:
     """One beautiful message per cycle with actionable recommendations."""
     if not analyses:
         return "📭 Сегодня нет сильных сигналов. Ждём лучших точек входа."
 
+    analyses = _dedupe_by_protocol(analyses)
     now = datetime.now(timezone.utc).strftime("%d.%m %H:%M UTC")
     buy_signals = [a for a in analyses if a.get("action_now") == "готовить вход"]
     watch_signals = [a for a in analyses if a.get("action_now") == "наблюдать"]
@@ -28,7 +47,8 @@ def format_daily_brief(analyses: list[dict], positions: dict) -> str:
     # BUY signals
     if buy_signals:
         lines.append(f"🟢 <b>Готовы к входу ({len(buy_signals)})</b>")
-        for a in buy_signals[:3]:
+        lines.append("   Эти протоколы показывают сильные сигналы для покупки.")
+        for a in buy_signals[:5]:
             proto = a.get("protocol", "").upper()
             stance = a.get("capital_stance", {}) or {}
             size = stance.get("deploy_now_usd", 0)
@@ -45,7 +65,8 @@ def format_daily_brief(analyses: list[dict], positions: dict) -> str:
     # WATCH signals
     if watch_signals:
         lines.append(f"🟡 <b>На наблюдении ({len(watch_signals)})</b>")
-        for a in watch_signals[:2]:
+        lines.append("   Есть потенциал, но пока рано входить.")
+        for a in watch_signals[:3]:
             proto = a.get("protocol", "").upper()
             reason = (a.get("capital_stance") or {}).get("reason", "")
             lines.append(f"   • {proto} — {reason[:80]}")
@@ -54,21 +75,26 @@ def format_daily_brief(analyses: list[dict], positions: dict) -> str:
     # WAIT signals
     if wait_signals:
         lines.append(f"🔵 <b>Рано входить ({len(wait_signals)})</b>")
-        for a in wait_signals[:2]:
+        lines.append("   Сигналы слабые или противоречивые. Ждём.")
+        for a in wait_signals[:3]:
             proto = a.get("protocol", "").upper()
             lines.append(f"   • {proto} — ждём подтверждения сигналов")
         lines.append("")
 
     # Portfolio summary
-    lines.append("<b>Портфель:</b>")
+    lines.append("<b>Ваш портфель:</b>")
     for strategy, data in positions.items():
         if data.get("count", 0) > 0:
             pnl = data.get("unrealized_pnl_usd", 0)
             emoji = "🟢" if pnl >= 0 else "🔴"
-            lines.append(f"   {strategy}: {data['count']} позиций | ${data['exposure_usd']:,.0f} | {emoji} ${pnl:,.0f}")
+            lines.append(f"   {strategy}: {data['count']} поз. | ${data['exposure_usd']:,.0f} | {emoji} ${pnl:,.0f}")
+    if not any(d.get("count", 0) > 0 for d in positions.values()):
+        lines.append("   Пока нет открытых позиций.")
 
     lines.append("")
-    lines.append("Ответь <b>=ПОДПИСАТЬ</b> + название протокола для ручного исполнения сделки.")
+    lines.append("<b>Как действовать:</b>")
+    lines.append("   Напиши <b>=ПОДПИСАТЬ НАЗВАНИЕ</b> — открою сделку вручную.")
+    lines.append("   Например: <b>=ПОДПИСАТЬ JUPITER</b>")
 
     return "\n".join(lines)
 

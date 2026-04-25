@@ -44,18 +44,20 @@ def cmd_run(args: argparse.Namespace) -> int:
             print(f"  divergence: {div}")
 
     if not args.only or args.only == "decide":
-        from src.decide import build_cards
+        from src.analyze import analyze_clusters
+        from src.telegram_alerts import send_daily_brief
+        from src.quality import open_positions_by_strategy
 
-        print("[decide] building cards...")
-        cards = build_cards(db_path, max_cards=args.max_cards)
-        print(f"  cards: {len(cards)}")
+        print("[decide] analyzing clusters...")
+        analyses = analyze_clusters(db_path, max_items=10)
+        positions = open_positions_by_strategy(db_path)
+        print(f"  analyses: {len(analyses)}")
 
-        from src.deliver import deliver
-
-        dry_run = not args.send
-        results = deliver(cards, topic_id=args.topic, dry_run=dry_run, card_type=args.card_type)
-        for r in results:
-            print(f"  {r['cluster_id']}: {r['status']}")
+        if args.send:
+            result = send_daily_brief(analyses, positions)
+            print(f"  delivery: {'sent' if result.get('ok') else result.get('error')}")
+        else:
+            print("  dry-run: use --send to deliver")
 
     return 0
 
@@ -69,9 +71,6 @@ def main(argv: list[str] | None = None) -> int:
     run_p.add_argument("--only", choices=["ingest", "classify", "wallets", "decide"], help="run single stage")
     run_p.add_argument("--db", default=None, help="sqlite path")
     run_p.add_argument("--send", action="store_true", help="actually send to Telegram (default dry-run)")
-    run_p.add_argument("--topic", default=None, help="Telegram topic ID")
-    run_p.add_argument("--max-cards", type=int, default=5, help="max decision cards")
-    run_p.add_argument("--card-type", default="decisions", help="delivery topic type (decisions/alerts/debug)")
 
     args = parser.parse_args(argv)
     if args.command == "run":
