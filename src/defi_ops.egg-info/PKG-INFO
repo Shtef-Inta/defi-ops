@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: defi-ops
+Version: 0.0.1
+Summary: DeFi signal pipeline for a $100k portfolio — read-only ingest, manual execution
+Requires-Python: >=3.14
+Requires-Dist: certifi>=2026.0
+Requires-Dist: pyrogram>=2.0.106
+Requires-Dist: telethon==1.43.2
+Requires-Dist: tenacity>=9.0
+Requires-Dist: tgcrypto>=1.2.5
+Requires-Dist: yt-dlp>=2026.3.17
+Provides-Extra: dev
+Requires-Dist: pytest>=8.3; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.24; extra == "dev"

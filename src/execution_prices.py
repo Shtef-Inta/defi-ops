@@ -1,7 +1,9 @@
-"""Price fetching with caching for daemon and strategies."""
+"""Price fetcher for execution: current prices with caching."""
 from __future__ import annotations
 
 import json
+import os
+import sqlite3
 import time
 import urllib.request
 import ssl
@@ -11,43 +13,24 @@ from src.db import get_conn
 
 _SSL_CTX = ssl.create_default_context()
 _CG_BASE = "https://api.coingecko.com/api/v3"
-
-PROTOCOL_TO_COIN = {
-    "jupiter": "jupiter-exchange-solana",
-    "aave": "aave",
-    "uniswap": "uniswap",
-    "ethena": "ethena",
-    "pendle": "pendle",
-    "morpho": "morpho",
-    "lido": "lido-dao",
-    "hyperliquid": "hyperliquid",
-    "fluid": "fluid",
-    "compound": "compound-governance-token",
-    "curve": "curve-dao-token",
-    "sky": "sky",
-    "spark": "spark",
-    "eigenlayer": "eigenlayer",
-    "gearbox": "gearbox",
-    "balancer": "balancer",
-    "gmx": "gmx",
-    "dydx": "dydx",
-}
+_CACHE_TABLE = """
+CREATE TABLE IF NOT EXISTS price_cache (
+    coin_id TEXT PRIMARY KEY,
+    usd REAL,
+    updated_at REAL
+)
+"""
 
 
-def _ensure_table(db_path: Optional[str] = None):
+def _ensure_cache(db_path: Optional[str] = None):
     conn = get_conn(db_path)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS price_cache (
-            coin_id TEXT PRIMARY KEY,
-            usd REAL,
-            updated_at REAL
-        )
-    """)
+    conn.execute(_CACHE_TABLE)
     conn.commit()
     conn.close()
 
 
-def fetch_price(coin_id: str) -> Optional[float]:
+def fetch_price(coin_id: str, max_age_seconds: int = 60) -> Optional[float]:
+    """Fetch USD price from CoinGecko with in-memory fallback."""
     try:
         url = f"{_CG_BASE}/simple/price?ids={coin_id}&vs_currencies=usd"
         req = urllib.request.Request(url, headers={"Accept": "application/json"})
@@ -58,20 +41,19 @@ def fetch_price(coin_id: str) -> Optional[float]:
         return None
 
 
-def snapshot_prices(db_path=None, coin_ids=None, max_age_minutes=5) -> dict[str, dict]:
-    _ensure_table(db_path)
+def snapshot_prices(coin_ids: list[str], max_age_minutes: int = 5, db_path: Optional[str] = None) -> dict[str, dict]:
+    """Return cached prices for coin_ids."""
+    _ensure_cache(db_path)
     conn = get_conn(db_path)
     now = time.time()
     result = {}
-    to_fetch = set(coin_ids or [])
-    if not to_fetch:
-        # Fetch all mapped protocols
-        to_fetch = set(PROTOCOL_TO_COIN.values())
-    for cid in list(to_fetch):
+    to_fetch = []
+    for cid in coin_ids:
         row = conn.execute("SELECT usd, updated_at FROM price_cache WHERE coin_id = ?", (cid,)).fetchone()
         if row and (now - row[1]) < max_age_minutes * 60:
             result[cid] = {"usd": row[0], "cached": True}
-            to_fetch.discard(cid)
+        else:
+            to_fetch.append(cid)
     for cid in to_fetch:
         price = fetch_price(cid)
         if price is not None:
@@ -83,3 +65,25 @@ def snapshot_prices(db_path=None, coin_ids=None, max_age_minutes=5) -> dict[str,
     conn.commit()
     conn.close()
     return result
+
+
+# Protocol mapping
+PROTOCOL_TO_COIN = {
+    "aave": "aave",
+    "uniswap": "uniswap",
+    "ethena": "ethena",
+    "morpho": "morpho",
+    "compound": "compound-governance-token",
+    "lido": "lido-dao",
+    "curve": "curve-dao-token",
+    "balancer": "balancer",
+    "gmx": "gmx",
+    "dydx": "dydx",
+    "jupiter": "jupiter-exchange-solana",
+    "hyperliquid": "hyperliquid",
+    "eigenlayer": "eigenlayer",
+    "sky": "sky",
+    "spark": "spark",
+    "gearbox": "gearbox",
+    "fluid": "fluid",
+}

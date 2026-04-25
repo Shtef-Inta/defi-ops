@@ -169,6 +169,21 @@ def _run_pipeline(db_path: Optional[str]) -> None:
         logger.error("whale_intelligence failed: %s", exc)
 
     try:
+        from src.macro import macro_summary
+        macro = macro_summary()
+        logger.info("Macro regime: %s | BTC.D: %.1f%% | Size adj: %.2fx", macro["regime"], macro["btc_dominance"], macro["size_adjustment"])
+    except Exception as exc:
+        logger.error("macro_summary failed: %s", exc)
+
+    try:
+        from src.yield_scanner import scan
+        yield_result = scan()
+        if yield_result.get("anomalies"):
+            logger.info("Yield anomalies: %d", len(yield_result["anomalies"]))
+    except Exception as exc:
+        logger.error("yield_scan failed: %s", exc)
+
+    try:
         ingest_all(db_path=db_path)
     except Exception as exc:
         logger.error("ingest_all failed: %s", exc)
@@ -201,16 +216,25 @@ def _run_pipeline(db_path: Optional[str]) -> None:
             logger.error("analyze_clusters (%s) failed: %s", name, exc)
             all_analyses[name] = []
 
-    # Deliver only conservative to Telegram (avoid spam)
+    # Deliver trade cards for BUY signals across all strategies
     try:
-        deliver_briefs(all_analyses.get("conservative", []))
+        from src.telegram_alerts import send_trade_card
+        for name, analyses in all_analyses.items():
+            for a in analyses:
+                if a.get("action_now") == "готовить вход":
+                    try:
+                        send_trade_card(a)
+                        logger.info("Sent trade card for %s (%s)", a.get("protocol", "?"), name)
+                    except Exception as send_exc:
+                        logger.error("send_trade_card failed: %s", send_exc)
     except Exception as exc:
         logger.error("deliver_briefs failed: %s", exc)
 
-    # Auto-open paper positions for all three strategies
+    # Auto-open paper positions for all three strategies with sizing
     try:
         from src.paper_trading import open_position
         from src.prices import snapshot_prices, PROTOCOL_TO_COIN
+        from src.sizing import suggest_size
         for name, analyses in all_analyses.items():
             existing = get_open_positions(db_path=db_path, strategy=name)
             open_protocols = {p["protocol"].lower() for p in existing}
@@ -230,7 +254,11 @@ def _run_pipeline(db_path: Optional[str]) -> None:
                 if current_price <= 0:
                     logger.warning("Cannot open %s position for %s: no price available", name, proto)
                     continue
-                size = a.get("capital_stance", {}).get("deploy_now_usd", 10000)
+                size_data = suggest_size(a, bankroll=100_000, current_positions=existing)
+                size = size_data.get("deploy_usd", a.get("capital_stance", {}).get("deploy_now_usd", 10000))
+                leverage = a.get("leverage", 1)
+                stop = current_price * 0.95
+                target = current_price * 1.15
                 pos_id = open_position(
                     cluster_id=a["cluster_id"],
                     protocol=a["protocol"],
@@ -242,9 +270,12 @@ def _run_pipeline(db_path: Optional[str]) -> None:
                     voice_weight=a.get("voice_weight", 0),
                     db_path=db_path,
                     strategy=name,
+                    leverage=leverage,
+                    stop_loss=stop,
+                    take_profit=target,
                 )
                 open_protocols.add(proto)
-                logger.info("Auto-opened %s paper position %s for %s at $%.6f (size $%.0f)", name, pos_id, proto, current_price, size)
+                logger.info("Auto-opened %s paper position %s for %s at $%.6f (size $%.0f, leverage %dx)", name, pos_id, proto, current_price, size, leverage)
     except Exception as exc:
         logger.error("auto_open_position failed: %s", exc)
 

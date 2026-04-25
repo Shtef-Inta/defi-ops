@@ -1,4 +1,4 @@
-"""Paper trading — virtual position tracking."""
+"""Paper trading engine with strategy tagging, PnL tracking, and snapshots."""
 from __future__ import annotations
 
 import sqlite3
@@ -8,62 +8,106 @@ from typing import Optional
 from src.db import get_conn
 
 
-def open_position(cluster_id, protocol, decision, entry_price, size_usd, source_families, signals_count, voice_weight, db_path=None, strategy="conservative"):
+def open_position(
+    cluster_id: int,
+    protocol: str,
+    decision: str,
+    entry_price: float,
+    size_usd: float,
+    source_families: str,
+    signals_count: int,
+    voice_weight: float,
+    db_path: Optional[str] = None,
+    strategy: str = "conservative",
+    leverage: int = 1,
+    stop_loss: Optional[float] = None,
+    take_profit: Optional[float] = None,
+) -> int:
     conn = get_conn(db_path)
     cur = conn.execute(
-        """INSERT INTO paper_positions
-        (cluster_id, protocol, decision, entry_price, size_usd, source_families, signals_count, voice_weight, strategy)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        (cluster_id, protocol, decision, entry_price, size_usd, source_families, signals_count, voice_weight, strategy),
+        """
+        INSERT INTO paper_positions
+            (cluster_id, protocol, decision, entry_price, size_usd,
+             source_families, signals_count, voice_weight, strategy,
+             leverage, stop_loss, take_profit, status, opened_at, pnl_usd)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, 0)
+        """,
+        (cluster_id, protocol, decision, entry_price, size_usd,
+         source_families, signals_count, voice_weight, strategy,
+         leverage, stop_loss, take_profit,
+         datetime.now(timezone.utc).isoformat()),
     )
     conn.commit()
-    pid = cur.lastrowid
-    conn.close()
-    return pid
+    return cur.lastrowid
 
 
-def snapshot_positions(db_path=None):
+def snapshot_positions(db_path: Optional[str] = None) -> dict:
     conn = get_conn(db_path)
-    positions = conn.execute("SELECT id, protocol, entry_price FROM paper_positions WHERE status = 'open'").fetchall()
-    for pos in positions:
-        # Placeholder: update with latest price if available
-        conn.execute(
-            "INSERT INTO position_snapshots (position_id, price_usd, pnl_pct, captured_at) VALUES (?, ?, ?, ?)",
-            (pos["id"], pos["entry_price"], 0.0, datetime.now(timezone.utc).isoformat()),
-        )
-    conn.commit()
+    cur = conn.execute(
+        """
+        SELECT COUNT(*), SUM(size_usd), SUM(pnl_usd)
+        FROM paper_positions WHERE status = 'open'
+        """
+    )
+    total, exposure, pnl = cur.fetchone()
     conn.close()
+    return {
+        "open_count": total or 0,
+        "total_exposure": exposure or 0,
+        "unrealized_pnl": pnl or 0,
+    }
 
 
-def get_open_positions(db_path=None, strategy=None):
+def get_open_positions(db_path: Optional[str] = None, strategy: Optional[str] = None) -> list[dict]:
     conn = get_conn(db_path)
-    sql = """
-        SELECT pp.*, ps.price_usd as latest_price, ps.pnl_pct as latest_pnl_pct
-        FROM paper_positions pp
-        LEFT JOIN position_snapshots ps ON ps.position_id = pp.id
-        WHERE pp.status = 'open'
-    """
-    params = []
+    sql = "SELECT * FROM paper_positions WHERE status = 'open'"
+    params = ()
     if strategy:
-        sql += " AND pp.strategy = ?"
-        params.append(strategy)
-    sql += " ORDER BY ps.captured_at DESC"
-    rows = conn.execute(sql, params).fetchall()
+        sql += " AND strategy = ?"
+        params = (strategy,)
+    cur = conn.execute(sql, params)
+    rows = cur.fetchall()
+    cols = [d[0] for d in cur.description]
     conn.close()
-    return [dict(r) for r in rows]
+    return [dict(zip(cols, row)) for row in rows]
 
 
-def close_position(pos_id, exit_price, reason, db_path=None):
+def close_position(pos_id: int, exit_price: float, reason: str, db_path: Optional[str] = None) -> dict:
     conn = get_conn(db_path)
-    row = conn.execute("SELECT entry_price FROM paper_positions WHERE id = ?", (pos_id,)).fetchone()
+    row = conn.execute(
+        "SELECT entry_price, size_usd, leverage FROM paper_positions WHERE id = ?",
+        (pos_id,),
+    ).fetchone()
     if not row:
         conn.close()
-        return
-    entry = row["entry_price"]
-    pnl = (exit_price - entry) / entry if entry else 0
+        return {"error": "position not found"}
+    entry_price, size_usd, leverage = row
+    pnl = (exit_price - entry_price) / entry_price * size_usd * leverage if entry_price else 0
     conn.execute(
-        "UPDATE paper_positions SET status = 'closed', exit_price = ?, exit_at = ?, pnl_pct = ?, closed_reason = ? WHERE id = ?",
-        (exit_price, datetime.now(timezone.utc).isoformat(), pnl, reason, pos_id),
+        """
+        UPDATE paper_positions
+        SET status = 'closed', exit_price = ?, closed_at = ?, close_reason = ?, pnl_usd = ?
+        WHERE id = ?
+        """,
+        (exit_price, datetime.now(timezone.utc).isoformat(), reason, pnl, pos_id),
     )
     conn.commit()
     conn.close()
+    return {"id": pos_id, "pnl_usd": pnl, "reason": reason}
+
+
+def update_position_pnl(pos_id: int, current_price: float, db_path: Optional[str] = None) -> float:
+    conn = get_conn(db_path)
+    row = conn.execute(
+        "SELECT entry_price, size_usd, leverage FROM paper_positions WHERE id = ? AND status = 'open'",
+        (pos_id,),
+    ).fetchone()
+    if not row:
+        conn.close()
+        return 0.0
+    entry_price, size_usd, leverage = row
+    pnl = (current_price - entry_price) / entry_price * size_usd * leverage if entry_price else 0
+    conn.execute("UPDATE paper_positions SET pnl_usd = ? WHERE id = ?", (pnl, pos_id))
+    conn.commit()
+    conn.close()
+    return pnl
