@@ -5,11 +5,12 @@ import json
 import time
 import urllib.request
 import ssl
+import certifi
 from typing import Optional
 
 from src.db import get_conn
 
-_SSL_CTX = ssl.create_default_context()
+_SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 _CG_BASE = "https://api.coingecko.com/api/v3"
 
 PROTOCOL_TO_COIN = {

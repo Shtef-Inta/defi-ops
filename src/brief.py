@@ -45,6 +45,11 @@ def format_digest(analyses: list[dict]) -> str:
     return "\n".join(lines)
 
 
+import re
+
+def _clean_html(text: str) -> str:
+    return re.sub(r'<[^>]+>', '', text)
+
 def format_trade_card(a: dict) -> str:
     """Format a single analysis as a trade recommendation card."""
     proto = a.get("protocol", "unknown").upper()
@@ -63,8 +68,8 @@ def format_trade_card(a: dict) -> str:
     not_confirmed = ", ".join(a.get("not_confirmed", []))
     risk_flags = a.get("risk_flags", [])
     contradiction = a.get("contradiction_reason")
-    what = a.get("what_happened", "")[:200]
-    why = a.get("why_moves_money", "")[:200]
+    what = _clean_html(a.get("what_happened", ""))[:180]
+    why = _clean_html(a.get("why_moves_money", ""))[:180]
     entry = a.get("trigger_for_entry", "—")
     exit_trig = a.get("trigger_for_exit", "—")
     tvl_data = a.get("liquidity") or {}

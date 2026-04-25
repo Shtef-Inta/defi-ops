@@ -4,9 +4,10 @@ from __future__ import annotations
 import json
 import urllib.request
 import ssl
+import certifi
 from typing import Optional
 
-_SSL_CTX = ssl.create_default_context()
+_SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 _DEFILLAMA_POOLS = "https://yields.llama.fi/pools"
 
 

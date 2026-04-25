@@ -7,6 +7,8 @@ import urllib.request
 import ssl
 from typing import Optional
 
+import certifi
+
 _BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 _GROUP_ID = os.environ.get("TELEGRAM_GROUP_ID", "-1003981168546")
 _TOPIC_SCHEMA = "203"      # Main DeFi/operator topic
@@ -14,7 +16,7 @@ _TOPIC_ALERTS = "206"      # Risk/alerts
 _TOPIC_SIGNALS = "208"     # Raw signals
 _TOPIC_TESTS = "209"       # Test messages
 
-_SSL_CTX = ssl.create_default_context()
+_SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 
 
 def _send(text: str, topic_id: Optional[str] = None, parse_mode: str = "HTML"):

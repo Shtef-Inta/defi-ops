@@ -5,13 +5,14 @@ import json
 import os
 import urllib.request
 import ssl
+import certifi
 from datetime import datetime, timezone
 from typing import Optional
 
 from src.db import get_conn
 
 _API_KEY = os.environ.get("ARKHAM_API_KEY", "")
-_SSL_CTX = ssl.create_default_context()
+_SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 _BASE = "https://api.arkhamintelligence.com"
 
 

@@ -13,7 +13,7 @@ try:
 
     _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 except ImportError:
-    _SSL_CTX = ssl.create_default_context()
+    _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "

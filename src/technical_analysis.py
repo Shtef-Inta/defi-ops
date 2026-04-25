@@ -21,7 +21,7 @@ try:
     import certifi
     _SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
 except Exception:
-    _SSL_CONTEXT = ssl.create_default_context()
+    _SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
 
 # Protocol → CoinGecko coin id
 _CG_ID_MAP: dict[str, str] = {

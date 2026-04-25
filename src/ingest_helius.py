@@ -5,11 +5,12 @@ import json
 import os
 import urllib.request
 import ssl
+import certifi
 from datetime import datetime, timezone
 from typing import Optional
 
 _API_KEY = os.environ.get("HELIUS_API_KEY", "")
-_SSL_CTX = ssl.create_default_context()
+_SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 _BASE = "https://mainnet.helius-rpc.com"
 
 

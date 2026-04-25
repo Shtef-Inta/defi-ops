@@ -17,7 +17,7 @@ try:
 
     _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 except ImportError:
-    _SSL_CTX = ssl.create_default_context()
+    _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 
 from src.db import get_conn
 

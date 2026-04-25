@@ -7,10 +7,12 @@ import urllib.request
 import ssl
 from typing import Optional
 
+import certifi
+
 from src.config import load_delivery
 
 _BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-_SSL_CTX = ssl.create_default_context()
+_SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 
 
 def send_card(text: str, topic_id: Optional[str] = None) -> dict:
