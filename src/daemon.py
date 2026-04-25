@@ -18,7 +18,7 @@ from src.deliver import deliver_briefs
 from src.brief import format_digest
 from src.paper_trading import snapshot_positions, get_open_positions, close_position
 from src.quality import open_positions_summary, open_positions_by_strategy
-from src.telegram_alerts import send_pipeline_digest, send_error_alert
+from src.telegram_alerts import send_daily_brief, send_trade_alert, send_error_alert
 from src import technical_analysis as ta
 from src import ta_webhook_server as webhook
 from src import dashboard_server as dashboard
@@ -216,21 +216,15 @@ def _run_pipeline(db_path: Optional[str]) -> None:
             logger.error("analyze_clusters (%s) failed: %s", name, exc)
             all_analyses[name] = []
 
-    # Deliver trade cards for BUY signals across all strategies
-    try:
-        from src.telegram_alerts import send_trade_card
-        for name, analyses in all_analyses.items():
-            for a in analyses:
-                if a.get("action_now") == "готовить вход":
-                    try:
-                        send_trade_card(a)
-                        logger.info("Sent trade card for %s (%s)", a.get("protocol", "?"), name)
-                    except Exception as send_exc:
-                        logger.error("send_trade_card failed: %s", send_exc)
-    except Exception as exc:
-        logger.error("deliver_briefs failed: %s", exc)
+    # Build flat list of all analyses for delivery
+    flat_analyses = []
+    for name, analyses in all_analyses.items():
+        for a in analyses:
+            a["_strategy"] = name
+            flat_analyses.append(a)
 
     # Auto-open paper positions for all three strategies with sizing
+    newly_opened = []
     try:
         from src.paper_trading import open_position
         from src.prices import snapshot_prices, PROTOCOL_TO_COIN
@@ -275,51 +269,33 @@ def _run_pipeline(db_path: Optional[str]) -> None:
                     take_profit=target,
                 )
                 open_protocols.add(proto)
+                newly_opened.append(a)
                 logger.info("Auto-opened %s paper position %s for %s at $%.6f (size $%.0f, leverage %dx)", name, pos_id, proto, current_price, size, leverage)
     except Exception as exc:
         logger.error("auto_open_position failed: %s", exc)
 
-    # Comparative strategy summary for Telegram
+    # Send ONE consolidated daily brief
     try:
-        from src.telegram_alerts import send_strategy_comparison
-        send_strategy_comparison(all_analyses)
+        from src.telegram_alerts import send_daily_brief, send_trade_alert
+        positions = open_positions_by_strategy(db_path=db_path)
+        result = send_daily_brief(flat_analyses, positions)
+        if result.get("ok"):
+            logger.info("Daily brief sent")
+        else:
+            logger.error("Daily brief failed: %s", result.get("error"))
+        # Immediate alerts only for newly opened positions
+        for a in newly_opened:
+            try:
+                send_trade_alert(a)
+            except Exception as alert_exc:
+                logger.error("Trade alert failed: %s", alert_exc)
     except Exception as exc:
-        logger.error("strategy_comparison failed: %s", exc)
-
-    try:
-        digest = format_digest(analyses)
-        logger.info("Digest: %s", digest[:200])
-    except Exception as exc:
-        logger.error("format_digest failed: %s", exc)
+        logger.error("telegram_delivery failed: %s", exc)
 
     try:
         snapshot_positions(db_path=db_path)
     except Exception as exc:
         logger.error("snapshot_positions failed: %s", exc)
-
-    try:
-        open_positions = get_open_positions(db_path=db_path)
-        logger.info("Open positions: %d", len(open_positions))
-    except Exception as exc:
-        logger.error("get_open_positions failed: %s", exc)
-
-    try:
-        summaries = open_positions_by_strategy(db_path=db_path)
-        for strategy, summary in summaries.items():
-            logger.info("Open positions %s: %s", strategy, summary)
-    except Exception as exc:
-        logger.error("open_positions_summary failed: %s", exc)
-
-    # Telegram digest
-    try:
-        from src.db import get_conn
-        conn = get_conn(db_path)
-        row = conn.execute("SELECT COUNT(*) as cnt FROM signals WHERE captured_at > datetime('now', '-1 hour')").fetchone()
-        new_signals = row["cnt"] if row else 0
-        conn.close()
-        send_pipeline_digest(new_signals=new_signals, analyses=analyses)
-    except Exception as exc:
-        logger.error("telegram_digest failed: %s", exc)
 
     # Night mode: AI education refresh (3 AM)
     try:
