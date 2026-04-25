@@ -32,3 +32,17 @@ Work one unchecked `PLAN.md` task at a time. Finish with checks. Do not call an 
 
 No Telegram send, live API spending, wallet mutation, signing, onchain action, trade, swap, transfer, or private-key handling without separate explicit approval from the user.
 
+
+## Disaster Prevention (post 2026-04-25 git clean incident)
+
+### Hard Rules
+1. **NEVER run `git clean -fd` without backup.** It deletes untracked files irreversibly.
+2. **Always run `./scripts/backup_untracked.sh` before any destructive git operation.**
+3. **Use `./scripts/safety_git_clean.py` instead of raw `git clean`.** It forces dry-run + backup + typed confirmation.
+4. **Commit early, commit often.** New src/ modules must be committed within 1 hour of creation.
+5. **State files (.session, .log, .sqlite) are NEVER committed.** Pre-commit hook enforces this.
+
+### Recovery
+- Untracked backups live in `state/backups/untracked_backup_YYYYMMDD_HHMMSS.tar.gz`
+- If GitHub is ahead of local: `git fetch origin && git reset --hard origin/main` (only after backup)
+- If local has uncommitted work: `git stash` or `./scripts/backup_untracked.sh` before any reset.
